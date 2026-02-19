@@ -324,6 +324,9 @@
     <button onclick="switchMode('essay')" id="mode-essay" class="mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 bg-white/5 border-2 border-white/10 text-gray-400 hover:border-white/30">
       ✍️ Essay Prep <span class="hidden sm:inline text-[10px] opacity-60">Ralfie</span>
     </button>
+    <button onclick="switchMode('notes')" id="mode-notes" class="mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 bg-white/5 border-2 border-white/10 text-gray-400 hover:border-white/30">
+      📋 Notes <span class="hidden sm:inline text-[10px] opacity-60">Sunny</span>
+    </button>
   </div>
 
   <!-- ======== STUDY MODE ======== -->
@@ -1066,6 +1069,299 @@
     <div class="max-w-3xl mx-auto space-y-4" id="essay-container"></div>
   </div>
 
+  <!-- ======== NOTES MODE ======== -->
+  <div id="view-notes" class="view hidden">
+    <div class="text-center mb-6">
+      <div class="flex justify-center mb-3"><div class="dwarf-avatar bg-amber-400/80 text-white animate-float">☀️</div></div>
+      <h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">📋 Sunny's Important Notes</h2>
+      <p class="text-gray-400 text-sm sm:text-base">Sunny the Wise One gathered everything you need to know in one place!</p>
+    </div>
+
+    <div class="max-w-4xl mx-auto space-y-6">
+
+      <!-- Quick Reference: Must-Know Terms -->
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border border-emerald-500/20">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-2xl">📚</span>
+          <h3 class="font-display font-bold text-xl sm:text-2xl bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">Must-Know Terms &amp; Definitions</h3>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div class="bg-emerald-500/5 rounded-xl p-4 border border-emerald-500/10">
+            <p class="text-emerald-300 font-bold text-sm mb-1">Schema Theory</p>
+            <p class="text-gray-400 text-sm">Cultural knowledge organized into mental frameworks that guide how we interpret texts.</p>
+          </div>
+          <div class="bg-emerald-500/5 rounded-xl p-4 border border-emerald-500/10">
+            <p class="text-emerald-300 font-bold text-sm mb-1">Top-Down Processing</p>
+            <p class="text-gray-400 text-sm">Using prior knowledge and expectations to interpret a text (not just reading the words).</p>
+          </div>
+          <div class="bg-emerald-500/5 rounded-xl p-4 border border-emerald-500/10">
+            <p class="text-emerald-300 font-bold text-sm mb-1">Situation Model</p>
+            <p class="text-gray-400 text-sm">The mental picture of characters, events, time &amp; space a reader builds while reading.</p>
+          </div>
+          <div class="bg-emerald-500/5 rounded-xl p-4 border border-emerald-500/10">
+            <p class="text-emerald-300 font-bold text-sm mb-1">Inference-Making</p>
+            <p class="text-gray-400 text-sm">Filling in narrative gaps using reasoning and prior cultural knowledge.</p>
+          </div>
+          <div class="bg-emerald-500/5 rounded-xl p-4 border border-emerald-500/10">
+            <p class="text-emerald-300 font-bold text-sm mb-1">Individualism vs. Collectivism</p>
+            <p class="text-gray-400 text-sm">Cultural value systems that shape how readers evaluate characters differently.</p>
+          </div>
+          <div class="bg-emerald-500/5 rounded-xl p-4 border border-emerald-500/10">
+            <p class="text-emerald-300 font-bold text-sm mb-1">Cultural Variable</p>
+            <p class="text-gray-400 text-sm">The argument that literary studies must include culture as a factor in interpretation.</p>
+          </div>
+          <div class="bg-emerald-500/5 rounded-xl p-4 border border-emerald-500/10">
+            <p class="text-emerald-300 font-bold text-sm mb-1">Reciprocity</p>
+            <p class="text-gray-400 text-sm">The principle of mutual exchange that governs dwarf-human interactions in fairy tales.</p>
+          </div>
+          <div class="bg-emerald-500/5 rounded-xl p-4 border border-emerald-500/10">
+            <p class="text-emerald-300 font-bold text-sm mb-1">FSK (Freiwillige Selbstkontrolle)</p>
+            <p class="text-gray-400 text-sm">The German movie rating system — Voluntary Self-Regulation of the Film Industry.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gilmour's 5 Dwarf Categories -->
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border border-amber-500/20">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-2xl">⛏️</span>
+          <h3 class="font-display font-bold text-xl sm:text-2xl bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">Gilmour's 5 Dwarf Categories</h3>
+        </div>
+        <div class="space-y-3">
+          <div class="flex gap-4 items-start bg-green-500/5 rounded-xl p-4 border border-green-500/10">
+            <span class="text-3xl flex-shrink-0">🤲</span>
+            <div><p class="text-green-300 font-bold text-base">1. The Unexpected Helper</p><p class="text-gray-400 text-sm mt-1">Assists without asking anything in return.</p><p class="text-gray-500 text-xs italic mt-1">Examples: The Elves and the Shoemaker, Snow White dwarfs</p></div>
+          </div>
+          <div class="flex gap-4 items-start bg-blue-500/5 rounded-xl p-4 border border-blue-500/10">
+            <span class="text-3xl flex-shrink-0">🫡</span>
+            <div><p class="text-blue-300 font-bold text-base">2. The Obedient Dwarf</p><p class="text-gray-400 text-sm mt-1">Controlled by a human through magic.</p><p class="text-gray-500 text-xs italic mt-1">Example: Das Blaue Licht</p></div>
+          </div>
+          <div class="flex gap-4 items-start bg-yellow-500/5 rounded-xl p-4 border border-yellow-500/10">
+            <span class="text-3xl flex-shrink-0">🎁</span>
+            <div><p class="text-yellow-300 font-bold text-base">3. The Volunteer Giver</p><p class="text-gray-400 text-sm mt-1">Offers help but expects equal value in return.</p></div>
+          </div>
+          <div class="flex gap-4 items-start bg-red-500/5 rounded-xl p-4 border border-red-500/10">
+            <span class="text-3xl flex-shrink-0">😈</span>
+            <div><p class="text-red-300 font-bold text-base">4. The Demonic Dwarf</p><p class="text-gray-400 text-sm mt-1">Acts as an abductor or manipulator.</p><p class="text-gray-500 text-xs italic mt-1">Example: Rumpelstiltskin</p></div>
+          </div>
+          <div class="flex gap-4 items-start bg-purple-500/5 rounded-xl p-4 border border-purple-500/10">
+            <span class="text-3xl flex-shrink-0">💀</span>
+            <div><p class="text-purple-300 font-bold text-base">5. The Ungrateful / Evil Dwarf</p><p class="text-gray-400 text-sm mt-1">Associated with greed and the Devil.</p><p class="text-gray-500 text-xs italic mt-1">Example: Schneewittchen und Rosenrot</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Texts -->
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border border-sky-500/20">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-2xl">📕</span>
+          <h3 class="font-display font-bold text-xl sm:text-2xl bg-gradient-to-r from-sky-400 to-blue-400 bg-clip-text text-transparent">Important Texts You Must Know</h3>
+        </div>
+        <div class="space-y-3">
+          <div class="bg-sky-500/5 rounded-xl p-4 border border-sky-500/10 flex gap-4 items-start">
+            <span class="text-2xl flex-shrink-0">📜</span>
+            <div><p class="text-sky-300 font-bold text-base">Rudlieb</p><p class="text-gray-400 text-sm mt-1">Early German dwarf story involving treasure and mistrust. One of the <strong class="text-white">earliest dwarf narratives</strong> in German literature.</p></div>
+          </div>
+          <div class="bg-sky-500/5 rounded-xl p-4 border border-sky-500/10 flex gap-4 items-start">
+            <span class="text-2xl flex-shrink-0">⚔️</span>
+            <div><p class="text-sky-300 font-bold text-base">Nibelungenlied</p><p class="text-gray-400 text-sm mt-1">Medieval epic. Dwarfs tied to <strong class="text-white">treasure, invisibility (Tarnkappe), and subjugation</strong>. Dwarf Alberich is overpowered and forced into servitude.</p></div>
+          </div>
+          <div class="bg-sky-500/5 rounded-xl p-4 border border-sky-500/10 flex gap-4 items-start">
+            <span class="text-2xl flex-shrink-0">👸</span>
+            <div><p class="text-sky-300 font-bold text-base">Snow White (Schneewittchen)</p><p class="text-gray-400 text-sm mt-1">Dwarfs as <strong class="text-white">miners, protectors, guardians of domestic stability</strong>. They offer shelter in exchange for housework.</p></div>
+          </div>
+          <div class="bg-sky-500/5 rounded-xl p-4 border border-sky-500/10 flex gap-4 items-start">
+            <span class="text-2xl flex-shrink-0">👞</span>
+            <div><p class="text-sky-300 font-bold text-base">The Elves and the Shoemaker</p><p class="text-gray-400 text-sm mt-1">Classic <strong class="text-white">Unexpected Helper</strong> story — dwarfs assist secretly without asking for anything.</p></div>
+          </div>
+          <div class="bg-sky-500/5 rounded-xl p-4 border border-sky-500/10 flex gap-4 items-start">
+            <span class="text-2xl flex-shrink-0">🔵</span>
+            <div><p class="text-sky-300 font-bold text-base">Das Blaue Licht</p><p class="text-gray-400 text-sm mt-1">Features the <strong class="text-white">Obedient Dwarf</strong> — a dwarf under magical control by a human.</p></div>
+          </div>
+          <div class="bg-sky-500/5 rounded-xl p-4 border border-sky-500/10 flex gap-4 items-start">
+            <span class="text-2xl flex-shrink-0">😈</span>
+            <div><p class="text-sky-300 font-bold text-base">Rumpelstiltskin (Rumpelstilzchen)</p><p class="text-gray-400 text-sm mt-1">The <strong class="text-white">Demonic Dwarf</strong> — demands the queen's firstborn child in exchange for spinning straw into gold.</p></div>
+          </div>
+          <div class="bg-sky-500/5 rounded-xl p-4 border border-sky-500/10 flex gap-4 items-start">
+            <span class="text-2xl flex-shrink-0">🐸</span>
+            <div><p class="text-sky-300 font-bold text-base">Der Froschkönig (The Frog Prince)</p><p class="text-gray-400 text-sm mt-1">Key Grimm fairy tale — example of stories <strong class="text-white">adapting across cultures and media</strong>.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grimm vs 7 Zwerge Comparison -->
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border border-pink-500/20">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-2xl">⚡</span>
+          <h3 class="font-display font-bold text-xl sm:text-2xl bg-gradient-to-r from-pink-400 to-rose-400 bg-clip-text text-transparent">Grimm's Snow White vs. 7 Zwerge (2004)</h3>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="bg-amber-500/5 rounded-2xl p-5 border border-amber-500/10">
+            <h4 class="text-amber-300 font-bold text-base mb-3 flex items-center gap-2">📕 Grimm's Snow White</h4>
+            <ul class="space-y-2.5">
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-amber-400 flex-shrink-0">•</span> Moral clarity — good vs. evil is clear</li>
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-amber-400 flex-shrink-0">•</span> Traditional gender roles</li>
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-amber-400 flex-shrink-0">•</span> Punishment &amp; reward structures</li>
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-amber-400 flex-shrink-0">•</span> Structured fairy tale logic</li>
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-amber-400 flex-shrink-0">•</span> Heroism is <strong class="text-white">individual and virtuous</strong></li>
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-amber-400 flex-shrink-0">•</span> Dwarfs are dutiful miners/protectors</li>
+            </ul>
+          </div>
+          <div class="bg-pink-500/5 rounded-2xl p-5 border border-pink-500/10">
+            <h4 class="text-pink-300 font-bold text-base mb-3 flex items-center gap-2">🎬 7 Zwerge (2004 Film)</h4>
+            <ul class="space-y-2.5">
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-pink-400 flex-shrink-0">•</span> Parody of Snow White</li>
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-pink-400 flex-shrink-0">•</span> Dwarfs are insecure &amp; socially awkward</li>
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-pink-400 flex-shrink-0">•</span> Exaggerates fairy tale conventions</li>
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-pink-400 flex-shrink-0">•</span> Destabilizes masculinity &amp; heroism</li>
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-pink-400 flex-shrink-0">•</span> Heroism is <strong class="text-white">collective and flawed</strong></li>
+              <li class="flex gap-3 text-gray-300 text-sm"><span class="text-pink-400 flex-shrink-0">•</span> Stars 7 most famous German comedians</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lecture Notes: Key Facts -->
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border border-green-500/20">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-2xl">🎤</span>
+          <h3 class="font-display font-bold text-xl sm:text-2xl bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">Key Lecture Facts</h3>
+        </div>
+        <div class="space-y-3">
+          <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-xl p-4 border-l-4 border-green-400 flex gap-3">
+            <span class="text-green-400 flex-shrink-0 font-bold">1.</span>
+            <p class="text-gray-300 text-sm"><strong class="text-white">Language, Culture, and Humor</strong> are three deeply interconnected aspects — humor is culturally specific and depends on shared knowledge.</p>
+          </div>
+          <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-xl p-4 border-l-4 border-green-400 flex gap-3">
+            <span class="text-green-400 flex-shrink-0 font-bold">2.</span>
+            <p class="text-gray-300 text-sm">Fairy tales have a <strong class="text-white">profound cultural impact</strong> — they shape societal expectations and have evolved to reflect changing cultural values.</p>
+          </div>
+          <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-xl p-4 border-l-4 border-green-400 flex gap-3">
+            <span class="text-green-400 flex-shrink-0 font-bold">3.</span>
+            <p class="text-gray-300 text-sm">Grimm's fairy tales were used for <strong class="text-white">German nationalism &amp; cultural preservation</strong>. They reflect the cultural history of the German people.</p>
+          </div>
+          <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-xl p-4 border-l-4 border-green-400 flex gap-3">
+            <span class="text-green-400 flex-shrink-0 font-bold">4.</span>
+            <p class="text-gray-300 text-sm">Grimm tales were <strong class="text-white">NOT originally for children</strong>. They were told by laborer women from backgrounds of hunger and poverty. Themes of hardship and survival were real.</p>
+          </div>
+          <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-xl p-4 border-l-4 border-green-400 flex gap-3">
+            <span class="text-green-400 flex-shrink-0 font-bold">5.</span>
+            <p class="text-gray-300 text-sm">The 7 Zwerge film was <strong class="text-white">extremely successful in Germany</strong> — it stars the 7 most famous German comedians representing dwarf characters through humor.</p>
+          </div>
+          <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-xl p-4 border-l-4 border-green-400 flex gap-3">
+            <span class="text-green-400 flex-shrink-0 font-bold">6.</span>
+            <p class="text-gray-300 text-sm">Key question: <strong class="text-white">Can you translate the humor</strong> in this movie to other cultures? Humor is deeply culture-specific.</p>
+          </div>
+          <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-xl p-4 border-l-4 border-green-400 flex gap-3">
+            <span class="text-green-400 flex-shrink-0 font-bold">7.</span>
+            <p class="text-gray-300 text-sm"><strong class="text-white">FSK</strong> = Freiwillige Selbstkontrolle der Filmwirtschaft — the German movie rating system (like the MPAA).</p>
+          </div>
+          <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-xl p-4 border-l-4 border-green-400 flex gap-3">
+            <span class="text-green-400 flex-shrink-0 font-bold">8.</span>
+            <p class="text-gray-300 text-sm"><strong class="text-white">Grimm → Disney → Eurodisney</strong> shows how fairy tales are culturally adapted: dark German tales → sanitized American versions → back to Europe in changed form.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Research Hypotheses & Findings -->
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border border-violet-500/20">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-2xl">📊</span>
+          <h3 class="font-display font-bold text-xl sm:text-2xl bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">Research Hypotheses &amp; Findings</h3>
+        </div>
+        <div class="space-y-4">
+          <div class="bg-blue-500/5 rounded-2xl p-5 border border-blue-500/10">
+            <p class="text-blue-300 font-bold text-base mb-2">Hypothesis 1</p>
+            <p class="text-gray-300 text-sm">Western readers → <strong class="text-white">individualistic</strong> interpretations (independence, personal agency)</p>
+            <p class="text-gray-300 text-sm mt-1">East Asian readers → <strong class="text-white">socially oriented</strong> interpretations (harmony, group responsibility)</p>
+          </div>
+          <div class="bg-pink-500/5 rounded-2xl p-5 border border-pink-500/10">
+            <p class="text-pink-300 font-bold text-base mb-2">Hypothesis 2</p>
+            <p class="text-gray-300 text-sm">Differences in plot preference: <strong class="text-white">adventurous vs. restrained</strong> development depending on cultural background.</p>
+          </div>
+          <div class="bg-green-500/5 rounded-2xl p-5 border border-green-500/10">
+            <p class="text-green-300 font-bold text-base mb-2">📊 Results</p>
+            <p class="text-gray-300 text-sm"><strong class="text-white">Statistically significant differences</strong> in inference-making → culture influences <strong class="text-white">deep cognitive processes</strong> in reading.</p>
+            <p class="text-gray-300 text-sm mt-1">Interpretation is NOT neutral. Reading is a <strong class="text-white">culturally situated act</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Big Picture Themes -->
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border border-amber-500/20">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-2xl">🧠</span>
+          <h3 class="font-display font-bold text-xl sm:text-2xl bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">Big Picture — Themes to Remember</h3>
+        </div>
+        <div class="space-y-3">
+          <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl p-4 border-l-4 border-amber-400 flex gap-3">
+            <span class="flex-shrink-0 text-lg">🔄</span>
+            <p class="text-gray-300 text-sm">Grimm = <strong class="text-white">stable moral structures</strong>; 7 Zwerge = <strong class="text-white">destabilizes through satire</strong>.</p>
+          </div>
+          <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl p-4 border-l-4 border-amber-400 flex gap-3">
+            <span class="flex-shrink-0 text-lg">📐</span>
+            <p class="text-gray-300 text-sm">Interpretation differences across cultures are <strong class="text-white">patterned and measurable</strong>, not random.</p>
+          </div>
+          <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl p-4 border-l-4 border-amber-400 flex gap-3">
+            <span class="flex-shrink-0 text-lg">🦸</span>
+            <p class="text-gray-300 text-sm">Heroism shifts from <strong class="text-white">individual moral clarity</strong> (Grimm) to <strong class="text-white">comedic group dynamics</strong> (7 Zwerge).</p>
+          </div>
+          <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl p-4 border-l-4 border-amber-400 flex gap-3">
+            <span class="flex-shrink-0 text-lg">⛏️</span>
+            <p class="text-gray-300 text-sm">Dwarfs originate in <strong class="text-white">Germanic myth &amp; medieval lit</strong> — they predate the Grimm tales.</p>
+          </div>
+          <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl p-4 border-l-4 border-amber-400 flex gap-3">
+            <span class="flex-shrink-0 text-lg">💎</span>
+            <p class="text-gray-300 text-sm">Dwarfs are linked to <strong class="text-white">mountains, mining, treasure, and hidden knowledge</strong>.</p>
+          </div>
+          <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl p-4 border-l-4 border-amber-400 flex gap-3">
+            <span class="flex-shrink-0 text-lg">🤝</span>
+            <p class="text-gray-300 text-sm"><strong class="text-white">Reciprocity &amp; exchange</strong> are central to every dwarf-human interaction.</p>
+          </div>
+          <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl p-4 border-l-4 border-amber-400 flex gap-3">
+            <span class="flex-shrink-0 text-lg">🎭</span>
+            <p class="text-gray-300 text-sm">Dwarfs shift roles across stories: <strong class="text-white">helper → servant → prophet → villain → demonic figure</strong>.</p>
+          </div>
+          <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl p-4 border-l-4 border-amber-400 flex gap-3">
+            <span class="flex-shrink-0 text-lg">📖</span>
+            <p class="text-gray-300 text-sm">Fairy tales are <strong class="text-white">adaptable narratives</strong> — same story, different meaning depending on when/where it's told.</p>
+          </div>
+          <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl p-4 border-l-4 border-amber-400 flex gap-3">
+            <span class="flex-shrink-0 text-lg">✨</span>
+            <p class="text-gray-300 text-sm"><strong class="text-white">Mystery &amp; limited knowledge</strong> = the enduring enchantment of dwarf figures.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADHD: Quick Cheat Sheet -->
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-2xl animate-gem-sparkle">💎</span>
+          <h3 class="font-display font-bold text-xl sm:text-2xl text-amber-300">⚡ Quick Cheat Sheet (If You Only Read One Thing!)</h3>
+        </div>
+        <div class="space-y-4">
+          <div class="bg-black/20 rounded-2xl p-5 border border-amber-500/20">
+            <p class="text-amber-300 font-bold text-sm uppercase tracking-wider mb-3">🧠 The One Big Idea</p>
+            <p class="text-white text-base sm:text-lg leading-relaxed font-medium">Culture shapes <em>everything</em> about how we read fairy tales — who we think is the hero, what we think the moral is, and what we find funny. This isn't opinion; it's measurable and significant.</p>
+          </div>
+          <div class="bg-black/20 rounded-2xl p-5 border border-amber-500/20">
+            <p class="text-amber-300 font-bold text-sm uppercase tracking-wider mb-3">⛏️ The Dwarf Summary</p>
+            <p class="text-white text-base sm:text-lg leading-relaxed font-medium">Dwarfs evolved from complex, morally ambiguous medieval figures → to simplified Grimm characters (helpers OR villains) → to comedic parodies in 7 Zwerge. Their magic is in their mystery.</p>
+          </div>
+          <div class="bg-black/20 rounded-2xl p-5 border border-amber-500/20">
+            <p class="text-amber-300 font-bold text-sm uppercase tracking-wider mb-3">🎬 The Film Summary</p>
+            <p class="text-white text-base sm:text-lg leading-relaxed font-medium">7 Zwerge (2004) = Snow White parody starring Germany's top 7 comedians. Massively popular in Germany. Its humor is culturally specific and hard to translate — proving that language, culture, and humor are inseparable.</p>
+          </div>
+          <div class="bg-black/20 rounded-2xl p-5 border border-amber-500/20">
+            <p class="text-amber-300 font-bold text-sm uppercase tracking-wider mb-3">📕 The Grimm Summary</p>
+            <p class="text-white text-base sm:text-lg leading-relaxed font-medium">Grimm tales = originally dark stories from poor working women → edited for Romantic nationalism → sanitized by Disney for global audiences. They were never "just for kids."</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </main>
 
 <!-- Back to Top Button -->
@@ -1295,7 +1591,8 @@ function switchMode(mode) {
     flashcards: 'bg-sky-500/20 border-sky-500 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]',
     quiz: 'bg-yellow-500/20 border-yellow-500 text-yellow-300 shadow-[0_0_15px_rgba(234,179,8,0.2)]',
     matching: 'bg-red-500/20 border-red-500 text-red-300 shadow-[0_0_15px_rgba(239,68,68,0.2)]',
-    essay: 'bg-indigo-500/20 border-indigo-500 text-indigo-300 shadow-[0_0_15px_rgba(99,102,241,0.2)]'
+    essay: 'bg-indigo-500/20 border-indigo-500 text-indigo-300 shadow-[0_0_15px_rgba(99,102,241,0.2)]',
+    notes: 'bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
   };
   document.getElementById(`mode-${mode}`).className = `mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 ${colors[mode]} border-2`;
 
