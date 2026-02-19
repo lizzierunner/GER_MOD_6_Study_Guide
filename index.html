@@ -99,11 +99,46 @@
       }
 
       /* Flashcard flip */
-      .flip-card { perspective: 1000px; }
+      .flip-card { perspective: 1200px; }
       .flip-card-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
       .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
       .flip-card-front, .flip-card-back { backface-visibility: hidden; }
       .flip-card-back { transform: rotateY(180deg); }
+
+      /* ADHD: high-contrast focus indicators */
+      .adhd-focus { position: relative; }
+      .adhd-focus::before {
+        content: ''; position: absolute; inset: -3px; border-radius: inherit;
+        border: 2px dashed rgba(251,191,36,0.4); opacity: 0; transition: opacity 0.3s;
+        pointer-events: none;
+      }
+      .adhd-focus:hover::before { opacity: 1; }
+
+      /* ADHD: progress dots for flashcards */
+      .fc-dot {
+        width: 10px; height: 10px; border-radius: 50%;
+        background: rgba(255,255,255,0.15); transition: all 0.3s;
+        flex-shrink: 0;
+      }
+      .fc-dot.active { background: #fbbf24; box-shadow: 0 0 8px rgba(251,191,36,0.5); transform: scale(1.3); }
+      .fc-dot.known { background: #34d399; box-shadow: 0 0 6px rgba(52,211,153,0.4); }
+
+      /* ADHD: keyboard shortcut hints */
+      .kbd {
+        display: inline-flex; align-items: center; justify-content: center;
+        padding: 2px 6px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace;
+        background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+        color: rgba(255,255,255,0.5); line-height: 1.2;
+      }
+
+      /* ADHD: gentle breathing glow on active card */
+      @keyframes breathe { 0%,100%{box-shadow:0 0 20px rgba(251,191,36,0.1), 0 8px 32px rgba(0,0,0,0.3)} 50%{box-shadow:0 0 40px rgba(251,191,36,0.2), 0 8px 32px rgba(0,0,0,0.3)} }
+      .animate-breathe { animation: breathe 3s ease-in-out infinite; }
+
+      /* Big flashcard sizing */
+      .flashcard-container { min-height: 420px; }
+      @media (min-width: 640px) { .flashcard-container { min-height: 480px; } }
+      @media (min-width: 1024px) { .flashcard-container { min-height: 500px; } }
 
       /* Glass effect */
       .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
@@ -289,23 +324,29 @@
   <div id="view-study" class="view">
     
     <!-- Progress overview -->
-    <div class="glass rounded-2xl p-5 mb-6 flex flex-wrap items-center justify-between gap-4 border border-amber-500/10">
+    <div class="glass rounded-2xl p-5 sm:p-6 mb-4 flex flex-wrap items-center justify-between gap-4 border border-amber-500/10">
       <div class="flex items-center gap-3">
         <div class="dwarf-avatar dwarf-avatar-sm bg-amber-400/80 text-white">☀️</div>
         <div>
-          <h2 class="font-display font-bold text-lg text-white flex items-center gap-2">⛏️ Mining Progress</h2>
+          <h2 class="font-display font-bold text-lg sm:text-xl text-white flex items-center gap-2">⛏️ Mining Progress</h2>
           <p class="text-gray-400 text-sm mt-1">Sunny says: "Dig into each topic to earn gems!"</p>
         </div>
       </div>
       <div class="flex items-center gap-4">
         <div class="text-center">
-          <div id="study-progress-pct" class="font-mono font-bold text-2xl text-purple-400">0%</div>
+          <div id="study-progress-pct" class="font-mono font-bold text-2xl text-amber-400">0%</div>
           <div class="text-[10px] text-gray-500 uppercase tracking-wider">Completed</div>
         </div>
         <div class="w-32 h-3 bg-gray-800 rounded-full overflow-hidden">
           <div id="study-progress-bar" class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-700" style="width:0%"></div>
         </div>
       </div>
+    </div>
+
+    <!-- ADHD: Quick tips bar -->
+    <div class="glass rounded-xl p-4 mb-6 flex items-center gap-3 border border-amber-500/10">
+      <span class="text-xl flex-shrink-0">💡</span>
+      <p class="text-gray-400 text-sm"><span class="text-amber-300 font-semibold">ADHD Tip:</span> Tap a topic to expand it. When you collapse it, it marks as complete! Don't worry about reading everything — <span class="text-white font-medium">focus on bold keywords</span> and move on.</p>
     </div>
 
     <!-- SECTION 1: Dwarfs -->
@@ -686,37 +727,100 @@
 
   <!-- ======== FLASHCARDS MODE ======== -->
   <div id="view-flashcards" class="view hidden">
-    <div class="text-center mb-6">
-      <div class="flex justify-center mb-3"><div class="dwarf-avatar bg-sky-400/80 text-white">☁️</div></div>
-      <h2 class="font-display font-bold text-2xl text-white mb-2">🃏 Cloudy's Flashcard Deck</h2>
-      <p class="text-gray-400 text-sm">Cloudy the Dreamer helps you memorize! Tap to flip • Use arrows to navigate</p>
-      <div class="flex justify-center gap-3 mt-3">
-        <span id="fc-progress" class="font-mono text-purple-400 text-sm">1 / 20</span>
-        <span class="text-gray-600">•</span>
-        <span id="fc-known" class="font-mono text-green-400 text-sm">0 known</span>
+    <div class="text-center mb-5">
+      <div class="flex justify-center mb-3"><div class="dwarf-avatar bg-sky-400/80 text-white animate-float">☁️</div></div>
+      <h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">🃏 Cloudy's Flashcard Deck</h2>
+      <p class="text-gray-400 text-sm sm:text-base">Cloudy the Dreamer helps you memorize! <span class="text-amber-400 font-semibold">Tap the card to flip it.</span></p>
+    </div>
+
+    <!-- ADHD: Visual progress dots -->
+    <div class="flex justify-center gap-1.5 mb-4 flex-wrap max-w-md mx-auto" id="fc-dots"></div>
+
+    <!-- Stats bar -->
+    <div class="flex justify-center gap-4 sm:gap-6 mb-6">
+      <div class="glass rounded-xl px-4 py-2 flex items-center gap-2">
+        <span class="text-amber-400">📍</span>
+        <span id="fc-progress" class="font-mono text-amber-300 text-sm font-bold">1 / 20</span>
+      </div>
+      <div class="glass rounded-xl px-4 py-2 flex items-center gap-2">
+        <span class="text-green-400">💎</span>
+        <span id="fc-known" class="font-mono text-green-300 text-sm font-bold">0 known</span>
+      </div>
+      <div class="glass rounded-xl px-4 py-2 flex items-center gap-2">
+        <span class="text-gray-400">📚</span>
+        <span id="fc-remaining" class="font-mono text-gray-300 text-sm font-bold">20 left</span>
       </div>
     </div>
 
-    <div class="flex justify-center mb-6">
-      <div id="flashcard" class="flip-card w-full max-w-lg cursor-pointer" onclick="flipCard()" style="min-height:320px;">
-        <div class="flip-card-inner relative w-full" style="min-height:320px;">
-          <div class="flip-card-front absolute inset-0 glass-strong rounded-2xl p-8 flex flex-col items-center justify-center text-center border-2 border-amber-500/20 hover:border-amber-500/40 transition-colors">
-            <span id="fc-category" class="tag bg-amber-500/20 text-amber-300 border border-amber-500/20 mb-4">Category</span>
-            <p id="fc-front" class="font-display font-bold text-xl sm:text-2xl text-white leading-snug">Question</p>
-            <p class="text-gray-500 text-xs mt-6 flex items-center gap-1">tap to flip 👆</p>
+    <!-- BIG FLASHCARD -->
+    <div class="flex justify-center mb-6 px-2">
+      <div id="flashcard" class="flip-card w-full max-w-2xl cursor-pointer animate-breathe adhd-focus rounded-3xl" onclick="flipCard()">
+        <div class="flip-card-inner relative w-full flashcard-container">
+          <div class="flip-card-front absolute inset-0 glass-strong rounded-3xl p-8 sm:p-12 flex flex-col items-center justify-center text-center border-2 border-amber-500/30 hover:border-amber-500/50 transition-colors shadow-2xl">
+            <div class="absolute top-4 left-5 flex items-center gap-2">
+              <span id="fc-category" class="tag bg-amber-500/20 text-amber-300 border border-amber-500/20 text-xs sm:text-sm">Category</span>
+            </div>
+            <div class="absolute top-4 right-5">
+              <div class="dwarf-avatar dwarf-avatar-sm bg-sky-400/60 text-white opacity-40">☁️</div>
+            </div>
+            <div class="flex-1 flex flex-col items-center justify-center py-8">
+              <p id="fc-front" class="font-display font-bold text-2xl sm:text-3xl lg:text-4xl text-white leading-snug max-w-lg">Question</p>
+            </div>
+            <div class="flex items-center gap-3 text-gray-500 text-sm">
+              <span>tap to reveal answer</span>
+              <span class="animate-float text-lg">👆</span>
+              <span class="kbd">Space</span>
+            </div>
           </div>
-          <div class="flip-card-back absolute inset-0 glass-strong rounded-2xl p-8 flex flex-col items-center justify-center text-center border-2 border-green-500/20">
-            <p id="fc-back" class="text-gray-200 text-base sm:text-lg leading-relaxed">Answer</p>
+          <div class="flip-card-back absolute inset-0 glass-strong rounded-3xl p-8 sm:p-12 flex flex-col items-center justify-center text-center border-2 border-green-500/30 shadow-2xl">
+            <div class="absolute top-4 left-5">
+              <span class="tag bg-green-500/20 text-green-300 border border-green-500/20 text-xs sm:text-sm">💡 Answer</span>
+            </div>
+            <div class="absolute top-4 right-5">
+              <div class="dwarf-avatar dwarf-avatar-sm bg-green-500/60 text-white opacity-40">✨</div>
+            </div>
+            <div class="flex-1 flex flex-col items-center justify-center py-8">
+              <p id="fc-back" class="text-gray-100 text-lg sm:text-xl lg:text-2xl leading-relaxed max-w-lg font-medium">Answer</p>
+            </div>
+            <p class="text-gray-500 text-sm flex items-center gap-2">tap to see question <span class="kbd">Space</span></p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="flex justify-center gap-3 sm:gap-4">
-      <button onclick="prevCard()" class="px-4 sm:px-5 py-3 rounded-xl glass border border-white/10 hover:border-white/30 transition font-bold text-lg" title="Previous">←</button>
-      <button onclick="markKnown()" class="px-5 sm:px-6 py-3 rounded-xl bg-green-500/20 border border-green-500/30 hover:bg-green-500/30 transition text-green-300 font-bold text-sm flex items-center gap-2">✓ Got it!</button>
-      <button onclick="shuffleCards()" class="px-4 sm:px-5 py-3 rounded-xl glass border border-white/10 hover:border-white/30 transition text-lg" title="Shuffle">🔀</button>
-      <button onclick="nextCard()" class="px-4 sm:px-5 py-3 rounded-xl glass border border-white/10 hover:border-white/30 transition font-bold text-lg" title="Next">→</button>
+    <!-- Dwarf encouragement (changes randomly) -->
+    <div class="text-center mb-5">
+      <p id="fc-encouragement" class="text-gray-500 text-sm italic transition-opacity duration-300">☁️ Cloudy whispers: "You're doing great, keep dreaming big!"</p>
+    </div>
+
+    <!-- ADHD: Big, clearly labeled buttons with keyboard hints -->
+    <div class="flex justify-center gap-3 sm:gap-4 flex-wrap">
+      <button onclick="prevCard()" class="px-5 sm:px-7 py-3.5 rounded-2xl glass border-2 border-white/10 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all font-bold text-xl flex items-center gap-2 group" title="Previous card">
+        <span>←</span>
+        <span class="hidden sm:inline text-sm text-gray-400 group-hover:text-amber-300 font-normal">Prev</span>
+        <span class="kbd hidden sm:inline">←</span>
+      </button>
+      <button onclick="markKnown()" class="px-6 sm:px-8 py-3.5 rounded-2xl bg-green-500/20 border-2 border-green-500/30 hover:bg-green-500/30 hover:border-green-500/50 transition-all text-green-300 font-bold text-base sm:text-lg flex items-center gap-2 shadow-lg shadow-green-500/10">
+        <span class="text-xl">💎</span> I Know This!
+      </button>
+      <button onclick="shuffleCards()" class="px-5 sm:px-6 py-3.5 rounded-2xl glass border-2 border-white/10 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all text-xl flex items-center gap-2 group" title="Shuffle deck">
+        <span>🔀</span>
+        <span class="hidden sm:inline text-sm text-gray-400 group-hover:text-amber-300 font-normal">Shuffle</span>
+      </button>
+      <button onclick="nextCard()" class="px-5 sm:px-7 py-3.5 rounded-2xl glass border-2 border-white/10 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all font-bold text-xl flex items-center gap-2 group" title="Next card">
+        <span class="hidden sm:inline text-sm text-gray-400 group-hover:text-amber-300 font-normal">Next</span>
+        <span>→</span>
+        <span class="kbd hidden sm:inline">→</span>
+      </button>
+    </div>
+
+    <!-- ADHD: Keyboard shortcut legend -->
+    <div class="mt-6 text-center">
+      <div class="inline-flex items-center gap-4 text-gray-600 text-xs">
+        <span class="flex items-center gap-1"><span class="kbd">←</span><span class="kbd">→</span> navigate</span>
+        <span class="flex items-center gap-1"><span class="kbd">Space</span> flip</span>
+        <span class="flex items-center gap-1"><span class="kbd">Enter</span> flip</span>
+      </div>
     </div>
   </div>
 
@@ -724,33 +828,43 @@
   <div id="view-quiz" class="view hidden">
     <div class="text-center mb-6">
       <div class="flex justify-center mb-3"><div class="dwarf-avatar bg-yellow-300/80 text-gray-900">⚡</div></div>
-      <h2 class="font-display font-bold text-2xl text-white mb-2">⚡ Speedy's Quick Quiz</h2>
-      <p class="text-gray-400 text-sm">Speedy challenges you — think fast, earn gems!</p>
-      <div class="flex justify-center gap-4 mt-3">
-        <span id="quiz-progress" class="font-mono text-purple-400 text-sm">Question 1 / 15</span>
-        <span class="text-gray-600">•</span>
-        <span id="quiz-score" class="font-mono text-green-400 text-sm">0 correct</span>
+      <h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">⚡ Speedy's Quick Quiz</h2>
+      <p class="text-gray-400 text-sm sm:text-base">Speedy challenges you — think fast, earn gems!</p>
+      <div class="flex justify-center gap-4 mt-4">
+        <div class="glass rounded-xl px-4 py-2 flex items-center gap-2">
+          <span class="text-amber-400">📍</span>
+          <span id="quiz-progress" class="font-mono text-amber-300 text-sm font-bold">Question 1 / 15</span>
+        </div>
+        <div class="glass rounded-xl px-4 py-2 flex items-center gap-2">
+          <span class="text-green-400">💎</span>
+          <span id="quiz-score" class="font-mono text-green-300 text-sm font-bold">0 correct</span>
+        </div>
       </div>
     </div>
-    <div id="quiz-container" class="max-w-2xl mx-auto"></div>
-    <div id="quiz-results" class="hidden max-w-2xl mx-auto"></div>
+    <div id="quiz-container" class="max-w-3xl mx-auto"></div>
+    <div id="quiz-results" class="hidden max-w-3xl mx-auto"></div>
   </div>
 
   <!-- ======== MATCHING MODE ======== -->
   <div id="view-matching" class="view hidden">
     <div class="text-center mb-6">
       <div class="flex justify-center mb-3"><div class="dwarf-avatar bg-red-500/80 text-white">😊</div></div>
-      <h2 class="font-display font-bold text-2xl text-white mb-2">🧩 Bubi's Match Game</h2>
-      <p class="text-gray-400 text-sm">Bubi the Innocent Hero wants to help — match the pairs!</p>
-      <div class="flex justify-center gap-4 mt-3">
-        <span id="match-score" class="font-mono text-green-400 text-sm">0 / 8 matched</span>
-        <span class="text-gray-600">•</span>
-        <span id="match-timer" class="font-mono text-amber-400 text-sm">0:00</span>
+      <h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">🧩 Bubi's Match Game</h2>
+      <p class="text-gray-400 text-sm sm:text-base">Bubi the Innocent Hero wants to help — tap a term, then its definition!</p>
+      <div class="flex justify-center gap-4 mt-4">
+        <div class="glass rounded-xl px-4 py-2 flex items-center gap-2">
+          <span class="text-green-400">💎</span>
+          <span id="match-score" class="font-mono text-green-300 text-sm font-bold">0 / 8 matched</span>
+        </div>
+        <div class="glass rounded-xl px-4 py-2 flex items-center gap-2">
+          <span class="text-amber-400">⏱️</span>
+          <span id="match-timer" class="font-mono text-amber-300 text-sm font-bold">0:00</span>
+        </div>
       </div>
     </div>
-    <div id="matching-container" class="max-w-3xl mx-auto grid sm:grid-cols-2 gap-6"></div>
+    <div id="matching-container" class="max-w-4xl mx-auto grid sm:grid-cols-2 gap-6"></div>
     <div class="text-center mt-6">
-      <button onclick="initMatching()" class="px-5 py-2.5 rounded-xl glass border border-white/10 hover:border-white/30 transition text-gray-400 text-sm font-semibold flex items-center gap-2 mx-auto">🔄 Reset Game</button>
+      <button onclick="initMatching()" class="px-6 py-3 rounded-2xl glass border-2 border-white/10 hover:border-amber-500/30 hover:bg-amber-500/5 transition text-gray-400 text-base font-semibold flex items-center gap-2 mx-auto">🔄 Reset Game</button>
     </div>
   </div>
 
@@ -758,10 +872,10 @@
   <div id="view-essay" class="view hidden">
     <div class="text-center mb-6">
       <div class="flex justify-center mb-3"><div class="dwarf-avatar bg-indigo-500/80 text-white">🤨</div></div>
-      <h2 class="font-display font-bold text-2xl text-white mb-2">✍️ Ralfie's Essay Workshop</h2>
-      <p class="text-gray-400 text-sm">Ralfie the Skeptic demands strong arguments — practice here! Drafts auto-save.</p>
+      <h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">✍️ Ralfie's Essay Workshop</h2>
+      <p class="text-gray-400 text-sm sm:text-base">Ralfie the Skeptic demands strong arguments — practice here! Drafts auto-save.</p>
     </div>
-    <div class="max-w-2xl mx-auto space-y-4" id="essay-container"></div>
+    <div class="max-w-3xl mx-auto space-y-4" id="essay-container"></div>
   </div>
 
 </main>
@@ -994,6 +1108,40 @@ function updateStudyProgress() {
 // FLASHCARDS
 // ============================================
 
+const dwarfEncouragements = [
+  "☁️ Cloudy whispers: \"You're doing great, keep dreaming big!\"",
+  "⛏️ Tschakko grunts: \"Tough stuff, but you're tougher!\"",
+  "☀️ Sunny beams: \"Your knowledge is shining brighter!\"",
+  "😊 Bubi cheers: \"Every card is a step forward!\"",
+  "🍪 Cookie offers: \"Study snack? You've earned it!\"",
+  "⚡ Speedy zips by: \"Quick learner! Keep that pace!\"",
+  "🤨 Ralfie admits: \"Okay, I'm actually impressed...\"",
+  "💎 The mine glows brighter with each card you learn!",
+  "⛏️ You're digging deeper into knowledge — the dwarfs are proud!",
+  "🏔️ Almost at the top of the mountain! Keep climbing!",
+];
+
+function renderFcDots() {
+  const dotsEl = document.getElementById('fc-dots');
+  if (!dotsEl) return;
+  dotsEl.innerHTML = fcOrder.map((realIdx, i) => {
+    let cls = 'fc-dot';
+    if (i === fcIndex) cls += ' active';
+    if (fcKnown.has(realIdx)) cls += ' known';
+    return `<div class="${cls}" title="Card ${i+1}"></div>`;
+  }).join('');
+}
+
+function showEncouragement() {
+  const el = document.getElementById('fc-encouragement');
+  if (!el) return;
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.textContent = dwarfEncouragements[Math.floor(Math.random() * dwarfEncouragements.length)];
+    el.style.opacity = '1';
+  }, 200);
+}
+
 function renderFlashcard() {
   if (fcOrder.length === 0) return;
   const data = flashcardData[fcOrder[fcIndex]];
@@ -1003,15 +1151,18 @@ function renderFlashcard() {
   document.getElementById('fc-category').textContent = data.category;
   document.getElementById('fc-progress').textContent = `${fcIndex + 1} / ${fcOrder.length}`;
   document.getElementById('fc-known').textContent = `${fcKnown.size} known`;
+  const remainEl = document.getElementById('fc-remaining');
+  if (remainEl) remainEl.textContent = `${fcOrder.length - fcKnown.size} left`;
+  renderFcDots();
 }
 
 function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
-function nextCard() { fcIndex = (fcIndex + 1) % fcOrder.length; renderFlashcard(); }
+function nextCard() { fcIndex = (fcIndex + 1) % fcOrder.length; renderFlashcard(); if (Math.random() < 0.3) showEncouragement(); }
 function prevCard() { fcIndex = (fcIndex - 1 + fcOrder.length) % fcOrder.length; renderFlashcard(); }
 
 function markKnown() {
   const realIdx = fcOrder[fcIndex];
-  if (!fcKnown.has(realIdx)) { fcKnown.add(realIdx); addXP(5); updateStreak(true); }
+  if (!fcKnown.has(realIdx)) { fcKnown.add(realIdx); addXP(5); updateStreak(true); showEncouragement(); }
   fcOrder.splice(fcIndex, 1);
   if (fcOrder.length === 0) {
     showAchievement('🃏', 'Cloudy is Proud!', 'You mastered all the flashcards!');
@@ -1047,17 +1198,17 @@ function renderQuiz() {
   document.getElementById('quiz-score').textContent = `${quizCorrect} correct`;
 
   const optionsHtml = data.options.map((opt, i) => `
-    <button onclick="answerQuiz(${i}, ${data.correct})" class="quiz-option w-full text-left p-4 rounded-xl glass border-2 border-white/10 hover:border-amber-500/40 transition-all text-sm sm:text-base text-gray-200 flex items-start gap-3 group" data-idx="${i}">
-      <span class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 group-hover:bg-amber-500/20 group-hover:text-amber-300 transition">${['A','B','C','D'][i]}</span>
-      <span class="pt-1">${opt}</span>
+    <button onclick="answerQuiz(${i}, ${data.correct})" class="quiz-option w-full text-left p-5 sm:p-6 rounded-2xl glass border-2 border-white/10 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all text-base sm:text-lg text-gray-200 flex items-center gap-4 group" data-idx="${i}">
+      <span class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-sm sm:text-base font-bold text-gray-400 flex-shrink-0 group-hover:bg-amber-500/20 group-hover:text-amber-300 transition">${['A','B','C','D'][i]}</span>
+      <span class="leading-snug">${opt}</span>
     </button>
   `).join('');
 
   container.innerHTML = `
     <div class="animate-slide-up">
-      <div class="glass-strong rounded-2xl p-6 sm:p-8 border border-amber-500/10">
-        <p class="font-display font-bold text-lg sm:text-xl text-white mb-6 leading-snug">${data.q}</p>
-        <div class="space-y-3" id="quiz-options">${optionsHtml}</div>
+      <div class="glass-strong rounded-2xl p-6 sm:p-10 border border-amber-500/10">
+        <p class="font-display font-bold text-xl sm:text-2xl text-white mb-8 leading-snug">${data.q}</p>
+        <div class="space-y-3 sm:space-y-4" id="quiz-options">${optionsHtml}</div>
         <div id="quiz-feedback" class="hidden mt-6"></div>
       </div>
     </div>`;
@@ -1079,13 +1230,13 @@ function answerQuiz(selected, correct) {
   feedback.classList.remove('hidden');
   if (isCorrect) {
     quizCorrect++; addXP(15); updateStreak(true);
-    feedback.innerHTML = `<div class="flex items-center gap-3 bg-green-500/10 border border-green-500/20 rounded-xl p-4"><span class="text-2xl">💎</span><div><p class="text-green-300 font-bold text-sm">Correct! Speedy is impressed! +15 XP</p><p class="text-gray-400 text-xs mt-0.5">Streak: ${streak} 🔥</p></div></div>`;
+    feedback.innerHTML = `<div class="flex items-center gap-4 bg-green-500/10 border-2 border-green-500/20 rounded-2xl p-5"><span class="text-3xl">💎</span><div><p class="text-green-300 font-bold text-base">Correct! Speedy is impressed! +15 XP</p><p class="text-gray-400 text-sm mt-1">Streak: ${streak} 🔥</p></div></div>`;
     confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 }, colors: ['#fbbf24', '#f97316', '#34d399'] });
   } else {
     updateStreak(false);
-    feedback.innerHTML = `<div class="flex items-center gap-3 bg-red-500/10 border border-red-500/20 rounded-xl p-4"><span class="text-2xl">🤨</span><div><p class="text-red-300 font-bold text-sm">Not quite!</p><p class="text-gray-400 text-xs mt-0.5">Ralfie says: "Check the green answer &amp; try again!" 💪</p></div></div>`;
+    feedback.innerHTML = `<div class="flex items-center gap-4 bg-red-500/10 border-2 border-red-500/20 rounded-2xl p-5"><span class="text-3xl">🤨</span><div><p class="text-red-300 font-bold text-base">Not quite!</p><p class="text-gray-400 text-sm mt-1">Ralfie says: "Check the green answer &amp; try again!" 💪</p></div></div>`;
   }
-  feedback.innerHTML += `<button onclick="nextQuizQuestion()" class="mt-4 px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-sm hover:opacity-90 transition inline-flex items-center gap-2">${quizAnswered.size >= quizOrder.length ? '💎 See Results' : '→ Next Question'}</button>`;
+  feedback.innerHTML += `<button onclick="nextQuizQuestion()" class="mt-5 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-base hover:opacity-90 transition inline-flex items-center gap-2 shadow-lg shadow-amber-500/20">${quizAnswered.size >= quizOrder.length ? '💎 See Results' : '→ Next Question'}</button>`;
   document.getElementById('quiz-score').textContent = `${quizCorrect} correct`;
 }
 
@@ -1132,12 +1283,12 @@ function initMatching() {
 
   container.innerHTML = `
     <div class="space-y-3">
-      <h3 class="text-blue-400 font-display font-bold text-sm uppercase tracking-wider mb-2">📝 Terms</h3>
-      ${terms.map(t => `<button onclick="selectMatch(this,'term',${t.idx})" class="match-item w-full text-left p-4 rounded-xl glass border-2 border-white/10 hover:border-blue-500/40 transition-all text-sm" data-type="term" data-idx="${t.idx}"><span class="text-blue-300 font-bold">${t.text}</span></button>`).join('')}
+      <h3 class="text-blue-400 font-display font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">📝 Terms <span class="text-xs text-gray-500 font-normal normal-case">(tap one)</span></h3>
+      ${terms.map(t => `<button onclick="selectMatch(this,'term',${t.idx})" class="match-item w-full text-left p-5 rounded-2xl glass border-2 border-white/10 hover:border-blue-500/40 hover:bg-blue-500/5 transition-all text-base" data-type="term" data-idx="${t.idx}"><span class="text-blue-300 font-bold text-base sm:text-lg">${t.text}</span></button>`).join('')}
     </div>
     <div class="space-y-3">
-      <h3 class="text-pink-400 font-display font-bold text-sm uppercase tracking-wider mb-2">💡 Definitions</h3>
-      ${defs.map(d => `<button onclick="selectMatch(this,'def',${d.idx})" class="match-item w-full text-left p-4 rounded-xl glass border-2 border-white/10 hover:border-pink-500/40 transition-all text-sm text-gray-300" data-type="def" data-idx="${d.idx}">${d.text}</button>`).join('')}
+      <h3 class="text-pink-400 font-display font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">💡 Definitions <span class="text-xs text-gray-500 font-normal normal-case">(then tap match)</span></h3>
+      ${defs.map(d => `<button onclick="selectMatch(this,'def',${d.idx})" class="match-item w-full text-left p-5 rounded-2xl glass border-2 border-white/10 hover:border-pink-500/40 hover:bg-pink-500/5 transition-all text-base text-gray-300" data-type="def" data-idx="${d.idx}">${d.text}</button>`).join('')}
     </div>`;
   updateMatchScore();
 }
@@ -1198,19 +1349,19 @@ function updateMatchTimer() {
 
 function renderEssay() {
   document.getElementById('essay-container').innerHTML = essayQuestions.map((eq, i) => `
-    <div class="glass rounded-2xl overflow-hidden transition-all">
-      <button onclick="toggleEssay(this)" class="w-full p-5 flex items-start gap-3 sm:gap-4 text-left group">
-        <span class="tag ${eq.section.includes('Dwarf') ? 'bg-amber-500/20 text-amber-300 border border-amber-500/20' : 'bg-purple-500/20 text-purple-300 border border-purple-500/20'} flex-shrink-0 text-[11px]">${eq.section}</span>
-        <p class="font-display font-bold text-white group-hover:text-purple-300 transition-colors text-sm sm:text-base flex-1">${eq.q}</p>
-        <span class="text-gray-600 text-xl transition-transform essay-arrow flex-shrink-0">›</span>
+    <div class="glass rounded-2xl overflow-hidden transition-all adhd-focus">
+      <button onclick="toggleEssay(this)" class="w-full p-5 sm:p-6 flex items-start gap-3 sm:gap-4 text-left group">
+        <span class="tag ${eq.section.includes('Dwarf') ? 'bg-amber-500/20 text-amber-300 border border-amber-500/20' : 'bg-purple-500/20 text-purple-300 border border-purple-500/20'} flex-shrink-0 text-xs sm:text-sm">${eq.section}</span>
+        <p class="font-display font-bold text-white group-hover:text-amber-300 transition-colors text-base sm:text-lg flex-1 leading-snug">${eq.q}</p>
+        <span class="text-gray-600 text-2xl transition-transform essay-arrow flex-shrink-0">›</span>
       </button>
-      <div class="essay-content hidden px-5 pb-5">
+      <div class="essay-content hidden px-5 sm:px-6 pb-6">
         <div class="sm:ml-16">
-          <p class="text-gray-400 text-xs uppercase tracking-wider font-bold mb-3">💡 Outline Hints:</p>
-          <div class="space-y-2 mb-4">
-            ${eq.hints.map(h => `<div class="bg-white/5 rounded-lg p-3 text-gray-300 text-sm border-l-4 border-purple-500/30 flex gap-2"><span class="text-purple-400">→</span> ${h}</div>`).join('')}
+          <p class="text-gray-400 text-sm uppercase tracking-wider font-bold mb-3 flex items-center gap-2">💡 Outline Hints <span class="text-xs text-gray-600 normal-case font-normal">(use these to structure your answer)</span></p>
+          <div class="space-y-2 mb-5">
+            ${eq.hints.map(h => `<div class="bg-white/5 rounded-xl p-4 text-gray-300 text-base border-l-4 border-amber-500/30 flex gap-3"><span class="text-amber-400 flex-shrink-0">→</span> ${h}</div>`).join('')}
           </div>
-          <textarea placeholder="Draft your answer here... (auto-saved)" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-gray-200 text-sm resize-y min-h-[120px] focus:outline-none focus:border-purple-500/40 transition placeholder:text-gray-600" oninput="localStorage.setItem('essay-${i}',this.value)">${localStorage.getItem('essay-'+i) || ''}</textarea>
+          <textarea placeholder="Draft your answer here... (auto-saved) ✍️" class="w-full bg-white/5 border-2 border-white/10 rounded-2xl p-5 text-gray-200 text-base resize-y min-h-[160px] focus:outline-none focus:border-amber-500/40 transition placeholder:text-gray-600 leading-relaxed" oninput="localStorage.setItem('essay-${i}',this.value)">${localStorage.getItem('essay-'+i) || ''}</textarea>
         </div>
       </div>
     </div>`).join('');
