@@ -3,793 +3,1344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>7 Zwerge Presentation - Final</title>
-    
-    <!-- 1. Load Tailwind CSS -->
+    <title>⛏️ Die 7 Zwerge — Module 6 Study Quest</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- 2. Load Icon Library (Lucide) -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- 3. Load Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-    <!-- 4. Custom Fonts -->
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap');
-    </style>
-    
-    <!-- 5. Tailwind Config for Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              serif: ['Cinzel', 'serif'],
-              sans: ['Lato', 'sans-serif'],
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+              display: ['Space Grotesk', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
             }
           }
         }
       }
     </script>
-
-    <!-- 6. Custom CSS Animations -->
     <style>
-        @layer utilities {
-          .animate-pulse-slow {
-            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-          }
-          
-          @keyframes slide-in {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          .animate-slide-in { animation: slide-in 0.6s ease-out forwards; }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body { font-family: 'Inter', system-ui, sans-serif; }
 
-          @keyframes fade-in-up {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          .animate-fade-in-up { animation: fade-in-up 0.5s ease-out forwards; }
-
-          @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-          }
-          .animate-float { animation: float 3s ease-in-out infinite; }
-          
-          @keyframes shine {
-            0% { background-position: 200% center; }
-            100% { background-position: -200% center; }
-          }
-          .animate-shine {
-            background-size: 200% auto;
-            animation: shine 4s linear infinite;
-          }
-
-          @keyframes pop-in {
-            0% { opacity: 0; transform: scale(0.5); }
-            70% { transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
-          }
-          .animate-pop-in { animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-
-          @keyframes cinematic-breathe {
-            0% { 
-              transform: scale(1.05) translateX(0%);
-            }
-            25% { 
-              transform: scale(1.08) translateX(-2%);
-            }
-            50% { 
-              transform: scale(1.10) translateX(0%);
-            }
-            75% { 
-              transform: scale(1.08) translateX(2%);
-            }
-            100% { 
-              transform: scale(1.05) translateX(0%);
-            }
-          }
-          .animate-cinematic-breathe { 
-            animation: cinematic-breathe 60s ease-in-out infinite;
-          }
-
-          @keyframes word-fade-in {
-            from { 
-              opacity: 0; 
-              transform: translateY(5px);
-            }
-            to { 
-              opacity: 1; 
-              transform: translateY(0);
-            }
-          }
-          .word-fade-in {
-            display: inline-block;
-            opacity: 0;
-            animation: word-fade-in 0.3s ease-out forwards;
-          }
-
-          .delay-100 { animation-delay: 100ms; }
-          .delay-200 { animation-delay: 200ms; }
-          .delay-300 { animation-delay: 300ms; }
-          .delay-400 { animation-delay: 400ms; }
-          .delay-500 { animation-delay: 500ms; }
-          .delay-600 { animation-delay: 600ms; }
-          .delay-700 { animation-delay: 700ms; }
-          .delay-800 { animation-delay: 800ms; }
-          .delay-1000 { animation-delay: 1000ms; }
+      /* ADHD-friendly: reduce motion for those who prefer it */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
         }
+      }
 
-        /* Responsive Improvements */
-        @media (max-width: 640px) {
-          /* Mobile-specific styles */
-          .animate-cinematic-breathe {
-            animation: none;
-            transform: scale(1.1);
-          }
-        }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #1a1a2e; }
+      ::-webkit-scrollbar-thumb { background: #4a3f8a; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #6c5ce7; }
 
-        /* Safe area for notched phones */
-        @supports (padding: env(safe-area-inset-bottom)) {
-          body {
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
-            padding-bottom: env(safe-area-inset-bottom);
-          }
-        }
+      /* Animations */
+      @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+      @keyframes pulse-glow { 0%,100%{box-shadow:0 0 20px rgba(108,92,231,0.3)} 50%{box-shadow:0 0 40px rgba(108,92,231,0.6)} }
+      @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+      @keyframes pop { 0%{transform:scale(0.8);opacity:0} 50%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
+      @keyframes slide-up { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
+      @keyframes slide-right { from{transform:translateX(-30px);opacity:0} to{transform:translateX(0);opacity:1} }
+      @keyframes flip-in { from{transform:rotateY(90deg);opacity:0} to{transform:rotateY(0);opacity:1} }
+      @keyframes bounce-in { 0%{transform:scale(0)} 50%{transform:scale(1.15)} 70%{transform:scale(0.95)} 100%{transform:scale(1)} }
+      @keyframes gradient-shift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+      @keyframes xp-fly { 0%{transform:translateY(0);opacity:1} 100%{transform:translateY(-60px);opacity:0} }
+      @keyframes wiggle { 0%,100%{transform:rotate(0deg)} 25%{transform:rotate(-3deg)} 75%{transform:rotate(3deg)} }
+      @keyframes rainbow { 0%{color:#ff6b6b} 16%{color:#feca57} 33%{color:#48dbfb} 50%{color:#ff9ff3} 66%{color:#54a0ff} 83%{color:#5f27cd} 100%{color:#ff6b6b} }
+      @keyframes pickaxe-swing { 0%,100%{transform:rotate(0deg)} 25%{transform:rotate(-20deg)} 50%{transform:rotate(15deg)} 75%{transform:rotate(-10deg)} }
+      @keyframes gem-sparkle { 0%,100%{filter:brightness(1) drop-shadow(0 0 4px rgba(251,191,36,0.3))} 50%{filter:brightness(1.4) drop-shadow(0 0 12px rgba(251,191,36,0.8))} }
+      @keyframes lantern-glow { 0%,100%{text-shadow:0 0 8px rgba(251,191,36,0.4)} 50%{text-shadow:0 0 20px rgba(251,191,36,0.8), 0 0 40px rgba(251,191,36,0.3)} }
+      @keyframes mine-cart { 0%{transform:translateX(-10px)} 50%{transform:translateX(10px)} 100%{transform:translateX(-10px)} }
 
-        /* Prevent text overflow */
-        .break-words {
-          word-wrap: break-word;
-          overflow-wrap: break-word;
-          hyphens: auto;
-        }
+      .animate-float { animation: float 3s ease-in-out infinite; }
+      .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+      .animate-shake { animation: shake 0.5s ease-in-out; }
+      .animate-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+      .animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
+      .animate-slide-right { animation: slide-right 0.4s ease-out forwards; }
+      .animate-flip-in { animation: flip-in 0.5s ease-out forwards; }
+      .animate-bounce-in { animation: bounce-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+      .animate-gradient { background-size: 200% 200%; animation: gradient-shift 3s ease infinite; }
+      .animate-wiggle { animation: wiggle 1s ease-in-out infinite; }
+      .animate-rainbow { animation: rainbow 3s linear infinite; }
+      .animate-xp-fly { animation: xp-fly 1.2s ease-out forwards; }
+      .animate-pickaxe { animation: pickaxe-swing 2s ease-in-out infinite; }
+      .animate-gem-sparkle { animation: gem-sparkle 2s ease-in-out infinite; }
+      .animate-lantern { animation: lantern-glow 3s ease-in-out infinite; }
+      .animate-mine-cart { animation: mine-cart 3s ease-in-out infinite; }
 
-        /* Smooth scrolling */
-        html {
-          scroll-behavior: smooth;
-        }
+      /* Dwarf avatar */
+      .dwarf-avatar {
+        width: 44px; height: 44px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; font-weight: 800; flex-shrink: 0;
+        border: 2px solid rgba(255,255,255,0.2);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .dwarf-avatar:hover { transform: scale(1.15) rotate(-5deg); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+      .dwarf-avatar-sm { width: 32px; height: 32px; font-size: 0.9rem; }
 
-        /* Better touch targets for mobile */
-        @media (max-width: 768px) {
-          button, [role="button"] {
-            min-height: 44px;
-            min-width: 44px;
-          }
-        }
+      /* Mine shaft decorative border */
+      .mine-border {
+        border-image: repeating-linear-gradient(
+          45deg,
+          rgba(161,98,7,0.3) 0px,
+          rgba(161,98,7,0.3) 2px,
+          transparent 2px,
+          transparent 8px
+        ) 8;
+      }
+
+      /* Flashcard flip */
+      .flip-card { perspective: 1000px; }
+      .flip-card-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+      .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+      .flip-card-front, .flip-card-back { backface-visibility: hidden; }
+      .flip-card-back { transform: rotateY(180deg); }
+
+      /* Glass effect */
+      .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+      .glass-strong { background: rgba(255,255,255,0.08); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.15); }
+
+      /* Focus ring for accessibility */
+      button:focus-visible, [tabindex]:focus-visible { outline: 2px solid #a78bfa; outline-offset: 2px; border-radius: 8px; }
+
+      /* Tag pills */
+      .tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.025em; }
+
+      /* Tooltip */
+      .tooltip-text { visibility: hidden; opacity: 0; transition: opacity 0.2s; }
+      .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+      /* Streak fire */
+      .streak-fire { filter: drop-shadow(0 0 8px rgba(251,146,60,0.5)); }
+
+      /* Background particles */
+      #particles-canvas {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none; z-index: 0; opacity: 0.4;
+      }
     </style>
 </head>
-<body class="bg-stone-900 text-white overflow-hidden">
-    <div id="root"></div>
+<body class="bg-[#0f0f23] text-white min-h-screen relative">
 
-    <!-- 7. Application Logic -->
-    <script>
-        // --- DATA ---
-        const presentationData = [
-          {
-            id: 1,
-            question: "How does schema theory help explain differences in how audiences interpret fairy tales?",
-            answer: "Schema theory helps explain that reading isn’t neutral — we bring culturally shaped mental frameworks with us every time we read. Those schemata influence how we judge characters, understand conflict, and fill in missing details. So when two audiences interpret the same fairy tale differently, it’s not random. They’re building different situation models based on what their culture has taught them to expect.",
-            dwarfs: ['sunny'], 
-            theme: "amber"
-          },
-          {
-            id: 2,
-            question: "How does 7 Zwerge challenge traditional fairy tale heroism?",
-            answer: "What I find interesting about 7 Zwerge is that it deliberately undercuts traditional heroism. Instead of confident, morally clear characters, we get awkward, insecure dwarfs who struggle socially. The parody exaggerates fairy tale conventions and makes us question what we usually accept as heroic. It shows that heroism isn’t fixed — it can be reshaped or even mocked depending on cultural context.",
-            dwarfs: ['bubi', 'tschakko'], 
-            theme: "red"
-          },
-          {
-            id: 3,
-            question: "How does the individualism vs. collectivism framework apply to character interpretation?",
-            answer: "The article suggests that Western audiences tend to admire independence and initiative, while East Asian audiences may prioritize harmony and social responsibility. That means what counts as a ‘good’ character isn’t universal — it depends on cultural values. So when audiences disagree about a character’s actions, they may actually be applying different cultural standards of morality.",
-            dwarfs: ['cookie', 'ralfie'], 
-            theme: "emerald"
-          },
-          {
-            id: 4,
-            question: "How does culture influence inference-making in stories?",
-            answer: "One of the most compelling findings in the study is that cultural differences affected inference-making, not just preferences. Participants interpreted motivation, causality, and even time and space differently. That suggests culture shapes the deeper cognitive processes happening during reading. It’s not just about liking one character more — it’s about constructing meaning differently.",
-            dwarfs: ['cloudy'], 
-            theme: "sky"
-          },
-          {
-            id: 5,
-            question: "What larger claim does the article make about stories and reality?",
-            answer: "The article ultimately argues that stories are part of how we create reality. If interpretation is guided by cultural frameworks, then meaning itself is culturally structured. That makes this study feel bigger than just fairy tales — it’s really about how culture shapes the way we understand the world.",
-            dwarfs: ['speedy'], 
-            theme: "violet"
-          }
-        ];
+<!-- Subtle animated background -->
+<canvas id="particles-canvas"></canvas>
 
-        const dwarfConfig = {
-          bubi: { icon: 'Smile', color: 'bg-red-500', text: 'Bubi', desc: 'The Innocent Hero' },
-          tschakko: { icon: 'Shield', color: 'bg-stone-600', text: 'Tschakko', desc: 'The Tough Guy' },
-          sunny: { icon: 'Sun', color: 'bg-amber-400', text: 'Sunny', desc: 'The Wise One' },
-          cloudy: { icon: 'Cloud', color: 'bg-sky-400', text: 'Cloudy', desc: 'The Dreamer' },
-          cookie: { icon: 'Utensils', color: 'bg-orange-500', text: 'Cookie', desc: 'The Cook' },
-          speedy: { icon: 'Zap', color: 'bg-yellow-300', text: 'Speedy', desc: 'The Fast One' },
-          ralfie: { icon: 'Frown', color: 'bg-indigo-500', text: 'Ralfie', desc: 'The Skeptic' },
-        };
+<!-- ============================================================ -->
+<!--  TOP NAV BAR                                                 -->
+<!-- ============================================================ -->
+<nav id="topnav" class="fixed top-0 left-0 right-0 z-50 glass-strong">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl animate-pickaxe">⛏️</span>
+      <div>
+        <h1 class="font-display font-bold text-sm sm:text-base leading-tight bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 bg-clip-text text-transparent">Die 7 Zwerge Study Quest</h1>
+        <p class="text-[10px] text-gray-400 font-mono">Module 6 · Dwarfs, Fairy Tales &amp; Culture</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 sm:gap-5">
+      <div id="streak-display" class="flex items-center gap-1.5 cursor-pointer tooltip relative" onclick="showStreakInfo()">
+        <span class="text-lg streak-fire">🔥</span>
+        <span id="streak-count" class="font-mono font-bold text-orange-400 text-sm">0</span>
+        <span class="tooltip-text absolute top-full mt-2 right-0 bg-gray-900 text-xs px-3 py-2 rounded-lg border border-gray-700 whitespace-nowrap z-50">Correct answer streak!</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="text-lg">⭐</span>
+        <span id="xp-display" class="font-mono font-bold text-amber-400 text-sm">0 XP</span>
+      </div>
+      <div id="level-badge" class="hidden sm:flex items-center gap-1.5 bg-purple-500/20 border border-purple-500/30 rounded-full px-3 py-1">
+        <span class="text-xs">👑</span>
+        <span id="level-display" class="font-mono font-bold text-purple-300 text-xs">Lv 1</span>
+      </div>
+      <button onclick="toggleTimer()" class="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-3 py-1.5 transition-all group">
+        <span class="text-base group-hover:animate-wiggle">⏱️</span>
+        <span id="timer-display" class="font-mono text-xs text-gray-300">25:00</span>
+      </button>
+    </div>
+  </div>
+  <div class="h-1 bg-gray-800">
+    <div id="xp-bar" class="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 transition-all duration-700 ease-out rounded-r" style="width:0%"></div>
+  </div>
+</nav>
 
-        const themeColors = {
-          amber: { gem: 'text-amber-400', button: 'bg-amber-600 hover:bg-amber-500', border: 'border-amber-500/30' },
-          red: { gem: 'text-red-500', button: 'bg-red-700 hover:bg-red-600', border: 'border-red-500/30' },
-          emerald: { gem: 'text-emerald-400', button: 'bg-emerald-700 hover:bg-emerald-600', border: 'border-emerald-500/30' },
-          sky: { gem: 'text-sky-400', button: 'bg-sky-600 hover:bg-sky-500', border: 'border-sky-500/30' },
-          violet: { gem: 'text-violet-400', button: 'bg-violet-600 hover:bg-violet-500', border: 'border-violet-500/30' },
-          neutral: { gem: 'text-stone-300', button: 'bg-stone-600 hover:bg-stone-500', border: 'border-stone-500/30' }
-        };
+<!-- XP Fly Animation Container -->
+<div id="xp-fly-container" class="fixed top-16 right-24 z-[60] pointer-events-none"></div>
 
-        // --- STATE ---
-        let currentSlideIndex = 0;
-        let isRevealed = false;
-        let isComplete = false;
+<!-- ============================================================ -->
+<!--  POMODORO TIMER MODAL                                        -->
+<!-- ============================================================ -->
+<div id="timer-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div class="glass-strong rounded-2xl p-8 max-w-sm w-full mx-4 text-center animate-pop">
+    <h3 class="font-display text-xl font-bold mb-2">⛏️ Mining Timer</h3>
+    <p class="text-gray-400 text-sm mb-6">Stay focused in the mine! Take breaks between sessions.</p>
+    <div class="relative w-48 h-48 mx-auto mb-6">
+      <svg class="w-full h-full" viewBox="0 0 100 100" style="transform:rotate(-90deg)">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="#1e1b4b" stroke-width="6"/>
+        <circle id="timer-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#timer-gradient)" stroke-width="6" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="0" style="transition:stroke-dashoffset 1s linear"/>
+        <defs><linearGradient id="timer-gradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f97316"/></linearGradient></defs>
+      </svg>
+      <div class="absolute inset-0 flex flex-col items-center justify-center" style="transform:rotate(0deg)">
+        <span id="timer-big" class="font-mono text-4xl font-bold text-white">25:00</span>
+        <span id="timer-label" class="text-xs text-gray-400 mt-1">FOCUS TIME</span>
+      </div>
+    </div>
+    <div class="flex gap-3 justify-center mb-4">
+      <button onclick="setTimer(15)" class="px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-300 text-sm font-semibold hover:bg-purple-500/30 transition">15 min</button>
+      <button onclick="setTimer(25)" class="px-4 py-2 rounded-lg bg-pink-500/20 border border-pink-500/30 text-pink-300 text-sm font-semibold hover:bg-pink-500/30 transition">25 min</button>
+      <button onclick="setTimer(45)" class="px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-300 text-sm font-semibold hover:bg-amber-500/30 transition">45 min</button>
+    </div>
+    <div class="flex gap-3 justify-center">
+      <button onclick="startTimer()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-sm hover:opacity-90 transition">⛏️ Start</button>
+      <button onclick="pauseTimer()" class="px-6 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white font-bold text-sm hover:bg-white/20 transition">⏸ Pause</button>
+    </div>
+    <button onclick="toggleTimer()" class="mt-4 text-gray-500 text-xs hover:text-gray-300 transition">close</button>
+  </div>
+</div>
 
-        // --- DOM ELEMENTS ---
-        const root = document.getElementById('root');
+<!-- ============================================================ -->
+<!--  ACHIEVEMENT TOAST                                           -->
+<!-- ============================================================ -->
+<div id="achievement-toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-[80] hidden">
+  <div class="glass-strong rounded-2xl px-6 py-4 flex items-center gap-4 animate-bounce-in border border-amber-500/30 shadow-[0_0_30px_rgba(251,191,36,0.2)]">
+    <span id="achievement-icon" class="text-3xl">🏆</span>
+    <div>
+      <p class="text-amber-400 font-bold text-sm" id="achievement-title">Achievement Unlocked!</p>
+      <p class="text-gray-300 text-xs" id="achievement-desc">You did something awesome!</p>
+    </div>
+  </div>
+</div>
 
-        // --- SOUND EFFECTS SYSTEM ---
-        const soundEffects = {
-          dwarfHover: 'https://example.com/sounds/wooden-pop.mp3', // Soft wooden pop sound
-          gemstoneClick: 'https://example.com/sounds/magical-chime.mp3', // Magical chime sound
-          confettiExplosion: 'https://example.com/sounds/tada-fanfare.mp3' // Ta-da fanfare sound
-        };
+<!-- ============================================================ -->
+<!--  MAIN CONTENT                                                -->
+<!-- ============================================================ -->
+<main class="relative z-10 pt-20 pb-24 px-4 max-w-5xl mx-auto">
 
-        // Audio cache to prevent reloading
-        const audioCache = {};
+  <!-- ⛏️ DWARF HERO BANNER -->
+  <div class="glass-strong rounded-2xl p-5 sm:p-6 mb-6 mt-4 border border-amber-500/20 overflow-hidden relative">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-radial from-amber-500/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
+    <div class="relative">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-2xl animate-lantern">🏔️</span>
+        <h2 class="font-display font-bold text-lg sm:text-xl bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 bg-clip-text text-transparent">The Mine Awaits, Scholar!</h2>
+        <span class="text-2xl animate-gem-sparkle">💎</span>
+      </div>
+      <p class="text-gray-400 text-sm mb-4">Meet your study companions — the 7 Zwerge! Each dwarf guides a different part of your quest.</p>
+      <div class="flex flex-wrap gap-3 sm:gap-4 justify-center sm:justify-start" id="dwarf-roster">
+        <div class="flex flex-col items-center gap-1.5 group cursor-default" title="Bubi — The Innocent Hero">
+          <div class="dwarf-avatar bg-red-500/80 text-white ring-2 ring-red-400/30 group-hover:ring-red-400/60">😊</div>
+          <span class="text-[10px] font-bold text-red-300">Bubi</span>
+        </div>
+        <div class="flex flex-col items-center gap-1.5 group cursor-default" title="Tschakko — The Tough Guy">
+          <div class="dwarf-avatar bg-stone-600/80 text-white ring-2 ring-stone-400/30 group-hover:ring-stone-400/60">🛡️</div>
+          <span class="text-[10px] font-bold text-stone-300">Tschakko</span>
+        </div>
+        <div class="flex flex-col items-center gap-1.5 group cursor-default" title="Sunny — The Wise One">
+          <div class="dwarf-avatar bg-amber-400/80 text-white ring-2 ring-amber-300/30 group-hover:ring-amber-300/60">☀️</div>
+          <span class="text-[10px] font-bold text-amber-300">Sunny</span>
+        </div>
+        <div class="flex flex-col items-center gap-1.5 group cursor-default" title="Cloudy — The Dreamer">
+          <div class="dwarf-avatar bg-sky-400/80 text-white ring-2 ring-sky-300/30 group-hover:ring-sky-300/60">☁️</div>
+          <span class="text-[10px] font-bold text-sky-300">Cloudy</span>
+        </div>
+        <div class="flex flex-col items-center gap-1.5 group cursor-default" title="Cookie — The Cook">
+          <div class="dwarf-avatar bg-orange-500/80 text-white ring-2 ring-orange-400/30 group-hover:ring-orange-400/60">🍪</div>
+          <span class="text-[10px] font-bold text-orange-300">Cookie</span>
+        </div>
+        <div class="flex flex-col items-center gap-1.5 group cursor-default" title="Speedy — The Fast One">
+          <div class="dwarf-avatar bg-yellow-300/80 text-gray-900 ring-2 ring-yellow-300/30 group-hover:ring-yellow-300/60">⚡</div>
+          <span class="text-[10px] font-bold text-yellow-300">Speedy</span>
+        </div>
+        <div class="flex flex-col items-center gap-1.5 group cursor-default" title="Ralfie — The Skeptic">
+          <div class="dwarf-avatar bg-indigo-500/80 text-white ring-2 ring-indigo-400/30 group-hover:ring-indigo-400/60">🤨</div>
+          <span class="text-[10px] font-bold text-indigo-300">Ralfie</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        function playSound(type) {
-          const soundUrl = soundEffects[type];
-          
-          if (!soundUrl) {
-            console.warn(`Sound type "${type}" not found`);
-            return;
-          }
+  <!-- MODE SELECTOR (dwarf-themed) -->
+  <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8">
+    <button onclick="switchMode('study')" id="mode-study" class="mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 bg-amber-500/20 border-2 border-amber-500 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+      📖 Study <span class="hidden sm:inline text-[10px] opacity-60">Sunny</span>
+    </button>
+    <button onclick="switchMode('flashcards')" id="mode-flashcards" class="mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 bg-white/5 border-2 border-white/10 text-gray-400 hover:border-white/30">
+      🃏 Flashcards <span class="hidden sm:inline text-[10px] opacity-60">Cloudy</span>
+    </button>
+    <button onclick="switchMode('quiz')" id="mode-quiz" class="mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 bg-white/5 border-2 border-white/10 text-gray-400 hover:border-white/30">
+      ⚡ Quiz <span class="hidden sm:inline text-[10px] opacity-60">Speedy</span>
+    </button>
+    <button onclick="switchMode('matching')" id="mode-matching" class="mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 bg-white/5 border-2 border-white/10 text-gray-400 hover:border-white/30">
+      🧩 Match <span class="hidden sm:inline text-[10px] opacity-60">Bubi</span>
+    </button>
+    <button onclick="switchMode('essay')" id="mode-essay" class="mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 bg-white/5 border-2 border-white/10 text-gray-400 hover:border-white/30">
+      ✍️ Essay Prep <span class="hidden sm:inline text-[10px] opacity-60">Ralfie</span>
+    </button>
+  </div>
 
-          // Check if audio is already cached
-          if (!audioCache[type]) {
-            audioCache[type] = new Audio(soundUrl);
-            audioCache[type].volume = 0.5; // Set default volume to 50%
-          }
+  <!-- ======== STUDY MODE ======== -->
+  <div id="view-study" class="view">
+    
+    <!-- Progress overview -->
+    <div class="glass rounded-2xl p-5 mb-6 flex flex-wrap items-center justify-between gap-4 border border-amber-500/10">
+      <div class="flex items-center gap-3">
+        <div class="dwarf-avatar dwarf-avatar-sm bg-amber-400/80 text-white">☀️</div>
+        <div>
+          <h2 class="font-display font-bold text-lg text-white flex items-center gap-2">⛏️ Mining Progress</h2>
+          <p class="text-gray-400 text-sm mt-1">Sunny says: "Dig into each topic to earn gems!"</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="text-center">
+          <div id="study-progress-pct" class="font-mono font-bold text-2xl text-purple-400">0%</div>
+          <div class="text-[10px] text-gray-500 uppercase tracking-wider">Completed</div>
+        </div>
+        <div class="w-32 h-3 bg-gray-800 rounded-full overflow-hidden">
+          <div id="study-progress-bar" class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-700" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
 
-          // Clone the audio to allow overlapping sounds
-          const sound = audioCache[type].cloneNode();
-          
-          // Play the sound
-          sound.play().catch(err => {
-            console.warn(`Could not play sound "${type}":`, err.message);
-          });
-        }
+    <!-- SECTION 1: Dwarfs -->
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="dwarf-avatar bg-stone-600/80 text-white animate-float">🛡️</div>
+        <div>
+          <h2 class="font-display font-bold text-xl sm:text-2xl bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">Part 1: Dwarfs in German Fairy Tales</h2>
+          <p class="text-gray-400 text-xs font-mono">Tschakko guards this section • Stringham Article • 5 topics</p>
+        </div>
+      </div>
 
-        // Add sound to dwarf hover events (will be applied when rendering)
-        function attachDwarfSounds() {
-          // Wait a bit for DOM to be ready
-          setTimeout(() => {
-            const dwarfElements = document.querySelectorAll('[data-dwarf-avatar]');
-            dwarfElements.forEach(dwarf => {
-              dwarf.addEventListener('mouseenter', () => {
-                playSound('dwarfHover');
-              });
-            });
-          }, 100);
-        }
+      <div class="grid gap-4" id="dwarfs-topics">
 
-        // --- RENDER FUNCTIONS ---
-        function initApp() {
-          if (!root) return;
-          root.innerHTML = '';
-          
-          // Create Main Container
-          const container = document.createElement('div');
-          container.className = "relative w-full h-screen overflow-hidden text-white font-sans selection:bg-amber-500/30 flex flex-col items-center justify-center p-4 md:p-8";
-          
-          // Background Layer
-          const bgLayer = document.createElement('div');
-          bgLayer.className = "absolute inset-0 z-0 bg-cover bg-center animate-cinematic-breathe";
-          bgLayer.style.backgroundImage = `url('https://images.unsplash.com/photo-1698413703803-8cbebf165be4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxteXN0aWNhbCUyMGdlcm1hbiUyMGZvcmVzdCUyMHdpdGglMjBtb3NzeSUyMHJvY2tzJTIwYW5kJTIwc3VubGlnaHR8ZW58MXx8fHwxNzcxNDU3NDk4fDA&ixlib=rb-4.1.0&q=80&w=1920')`;
-          bgLayer.style.filter = 'brightness(0.6) saturate(1.1) contrast(1.1)';
-          
-          // Overlay
-          const overlay = document.createElement('div');
-          overlay.className = "absolute inset-0 bg-stone-900/40 backdrop-blur-[1px] z-0 pointer-events-none";
-
-          container.appendChild(bgLayer);
-          container.appendChild(overlay);
-          
-          // Slide Container
-          const slideContainer = document.createElement('div');
-          slideContainer.id = "slide-container";
-          slideContainer.className = "relative z-10 w-full max-w-5xl transition-all duration-500";
-          slideContainer.style.transformStyle = "preserve-3d";
-          
-          container.appendChild(slideContainer);
-          root.appendChild(container);
-
-          renderSlide();
-        }
-
-        function renderSlide() {
-          const slideContainer = document.getElementById('slide-container');
-          if (!slideContainer) return;
-
-          if (isComplete) {
-            renderEndSlide(slideContainer);
-            return;
-          }
-
-          const data = presentationData[currentSlideIndex];
-          const theme = themeColors[data.theme] || themeColors.amber;
-          const isLast = currentSlideIndex === presentationData.length - 1;
-
-          // Generate Dwarfs HTML
-          const dwarfsHtml = data.dwarfs.map(dwarfKey => {
-            const config = dwarfConfig[dwarfKey];
-            return `
-              <div class="flex flex-col items-center gap-1 sm:gap-2 group/avatar transition-transform hover:scale-110 duration-300" data-dwarf-avatar="${dwarfKey}">
-                <div class="relative">
-                  <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[15px] sm:border-l-[20px] border-r-[15px] sm:border-r-[20px] border-b-[22px] sm:border-b-[30px] border-l-transparent border-r-transparent ${config.color.replace('bg-', 'border-b-')} opacity-0 transition-all duration-300 group-hover/avatar:-translate-y-2 group-hover/avatar:opacity-100 blur-sm"></div>
-                  <div class="${config.color} rounded-full flex items-center justify-center shadow-[0_4px_0_rgba(0,0,0,0.3)] border-2 sm:border-4 border-white/20 relative z-10 w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16">
-                    <i data-lucide="${config.icon}" class="text-white w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8"></i>
-                  </div>
-                </div>
-                <div class="flex flex-col items-center relative">
-                  <span class="text-white font-serif font-bold text-[10px] sm:text-xs md:text-sm tracking-wide drop-shadow-md bg-stone-900/60 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full backdrop-blur-sm border border-stone-500/30">
-                    ${config.text}
-                  </span>
-                  <span class="absolute top-full mt-2 text-xs text-amber-200 opacity-0 group-hover/avatar:opacity-100 transition-opacity bg-black/80 px-2 py-1 rounded pointer-events-none whitespace-nowrap z-50 hidden sm:block">
-                    ${config.desc}
-                  </span>
-                </div>
+        <!-- Topic 1: Article Overview -->
+        <div class="study-card glass rounded-2xl overflow-hidden transition-all hover:border-amber-500/30 group" data-topic="dwarfs-1">
+          <button onclick="toggleTopic(this)" class="w-full p-5 flex items-start gap-4 text-left">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="w-7 h-7 rounded-lg bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center text-amber-400 transition-all topic-check" data-checked="false">
+                <span class="check-icon hidden text-sm font-bold">✓</span>
+                <span class="uncheck-icon text-xs font-bold">1</span>
               </div>
-            `;
-          }).join('');
-
-          // Generate Content HTML
-          const contentHtml = `
-            <div class="bg-[#2a241e]/95 border-2 border-[#5c4d3c] rounded-lg shadow-[0_20px_50px_rgba(0,0,0,0.6)] overflow-hidden p-4 sm:p-6 md:p-12 min-h-[50vh] sm:min-h-[60vh] flex flex-col animate-slide-in max-h-[90vh] overflow-y-auto">
-              
-              <!-- Decorative Corners - Hidden on very small screens -->
-              <div class="hidden sm:block absolute top-3 left-3 w-4 h-4 bg-[#8b7355] rounded-full shadow-inner border border-[#3e3428]"></div>
-              <div class="hidden sm:block absolute top-3 right-3 w-4 h-4 bg-[#8b7355] rounded-full shadow-inner border border-[#3e3428]"></div>
-              <div class="hidden sm:block absolute bottom-3 left-3 w-4 h-4 bg-[#8b7355] rounded-full shadow-inner border border-[#3e3428]"></div>
-              <div class="hidden sm:block absolute bottom-3 right-3 w-4 h-4 bg-[#8b7355] rounded-full shadow-inner border border-[#3e3428]"></div>
-              
-              <!-- Inner Border - Hidden on very small screens -->
-              <div class="hidden sm:block absolute inset-4 border ${theme.border} rounded pointer-events-none"></div>
-
-              <!-- Header -->
-              <div class="relative z-10 flex flex-col items-center text-center mb-4 sm:mb-8">
-                <h2 class="text-base sm:text-xl md:text-2xl text-stone-200 font-serif italic tracking-wide mb-4 sm:mb-8 drop-shadow-md px-2">
-                  A Critical Analysis of "7 Zwerge – Männer allein im Wald"
-                </h2>
-                
-                <div class="flex flex-wrap justify-center gap-3 sm:gap-6 md:gap-8 mb-4 sm:mb-8">
-                  ${dwarfsHtml}
-                </div>
-
-                <h1 class="text-xl sm:text-2xl md:text-4xl font-bold text-white mb-4 sm:mb-6 leading-tight drop-shadow-lg max-w-4xl px-2 break-words">
-                  ${data.question}
-                </h1>
-              </div>
-
-              <!-- Content Area (Gemstone or Answer) -->
-              <div class="relative z-10 flex-1 flex flex-col items-center justify-center min-h-[150px] sm:min-h-[200px]">
-                
-                <!-- Gemstone Container -->
-                <div id="gemstone-container" class="${isRevealed ? 'hidden' : 'flex'} flex-col items-center cursor-pointer group transition-transform hover:scale-105 active:scale-95">
-                  <div class="relative">
-                     <div class="absolute inset-0 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-colors"></div>
-                     <!-- SVG Gemstone -->
-                     <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="${theme.gem} drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] animate-pulse-slow sm:w-[120px] sm:h-[120px]">
-                       <path d="M6 3h12l4 6-10 13L2 9z"></path>
-                     </svg>
-                  </div>
-                  <div class="mt-4 sm:mt-6 text-center">
-                    <span class="inline-block px-3 sm:px-4 py-2 bg-stone-800/80 border border-stone-600 rounded text-stone-300 font-serif text-xs sm:text-sm tracking-widest uppercase group-hover:bg-stone-700 transition-colors">
-                      Tap to Reveal
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Answer Container -->
-                <div id="answer-container" class="${isRevealed ? 'flex' : 'hidden'} flex-col items-center text-center px-2">
-                  <p id="answer-text" class="text-base sm:text-lg md:text-2xl text-stone-200 leading-relaxed max-w-3xl mb-6 sm:mb-10 font-serif break-words" data-answer="${data.answer.replace(/"/g, '&quot;')}">
-                  </p>
-                  
-                  <div id="next-btn-container" class="flex gap-4 opacity-0 transition-opacity duration-500">
-                     <button id="next-btn" class="flex items-center gap-2 px-5 sm:px-8 py-2.5 sm:py-3 rounded-sm font-serif font-bold transition-all shadow-md uppercase tracking-wider text-sm sm:text-base ${theme.button} text-white hover:scale-105 active:scale-95 border border-white/20">
-                       ${isLast ? 'Finish' : 'Next'} <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                     </button>
-                  </div>
-                </div>
-
-              </div>
-
-              <!-- Footer/Progress -->
-              <div class="relative z-10 mt-4 sm:mt-8 flex justify-between items-center border-t border-white/10 pt-3 sm:pt-4">
-                <div class="text-stone-400 font-mono text-[10px] sm:text-xs uppercase tracking-widest">
-                  ${data.id} / ${presentationData.length}
-                </div>
-                <div class="flex gap-1">
-                  ${presentationData.map((_, idx) => `
-                    <div class="h-1 rounded-full transition-all duration-300 ${idx === currentSlideIndex ? `w-8 ${theme.button.split(' ')[0]}` : 'w-2 bg-stone-700'}"></div>
-                  `).join('')}
-                </div>
-              </div>
-
             </div>
-          `;
-
-          slideContainer.innerHTML = contentHtml;
-          
-          // Re-initialize icons using Global Lucide
-          lucide.createIcons({ icons: lucide.icons });
-
-          // If answer is already revealed, show it with typewriter effect
-          if (isRevealed) {
-            const answerText = document.getElementById('answer-text');
-            if (answerText) {
-              const answer = answerText.getAttribute('data-answer');
-              typewriterEffect(answer, answerText);
-            }
-          }
-
-          // Attach event listeners manually
-          const gemBtn = document.getElementById('gemstone-container');
-          if (gemBtn) gemBtn.addEventListener('click', handleReveal);
-          
-          const nextBtn = document.getElementById('next-btn');
-          if (nextBtn) nextBtn.addEventListener('click', handleNext);
-
-          // Attach sound effects to dwarfs
-          attachDwarfSounds();
-        }
-
-        function renderEndSlide(container) {
-          // Play ta-da fanfare sound
-          playSound('confettiExplosion');
-          
-          // --- CONFETTI FIREWORKS ---
-          const duration = 5 * 1000;
-          const animationEnd = Date.now() + duration;
-          const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-          function randomInRange(min, max) {
-            return Math.random() * (max - min) + min;
-          }
-
-          const interval = setInterval(function() {
-            const timeLeft = animationEnd - Date.now();
-
-            if (timeLeft <= 0) {
-              return clearInterval(interval);
-            }
-
-            const particleCount = 50 * (timeLeft / duration);
-            // Global confetti call
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-          }, 250);
-
-
-          // All dwarfs together!
-          const allDwarfs = Object.keys(dwarfConfig);
-          const dwarfsHtml = allDwarfs.map((key, index) => {
-            const config = dwarfConfig[key];
-            const delayClass = `delay-${(index + 1) * 100}`;
-            
-            return `
-              <div class="flex flex-col items-center gap-1 sm:gap-2 animate-pop-in opacity-0 ${delayClass}" style="animation-fill-mode: forwards;" data-dwarf-avatar="${key}">
-                <div class="${config.color} rounded-full flex items-center justify-center shadow-[0_4px_25px_rgba(255,255,255,0.4)] border-2 sm:border-4 border-white/20 w-12 h-12 sm:w-16 sm:h-16 md:w-24 md:h-24 hover:scale-110 transition-transform cursor-default animate-float">
-                  <i data-lucide="${config.icon}" class="text-white w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 drop-shadow-lg"></i>
-                </div>
-                <span class="text-white font-serif font-bold text-[10px] sm:text-xs uppercase tracking-wider drop-shadow-md bg-stone-900/60 px-2 py-0.5 rounded-full backdrop-blur-sm border border-stone-500/30">
-                  ${config.text}
-                </span>
-              </div>
-            `;
-          }).join('');
-
-          const contentHtml = `
-            <div class="bg-[#2a241e]/95 border-2 border-[#5c4d3c] rounded-lg shadow-[0_20px_50px_rgba(0,0,0,0.6)] overflow-hidden p-4 sm:p-6 md:p-12 min-h-[60vh] sm:min-h-[70vh] max-h-[95vh] overflow-y-auto flex flex-col items-center justify-center text-center animate-slide-in relative">
-              
-              <!-- Decorative Border - Hidden on mobile -->
-              <div class="hidden sm:block absolute inset-4 border border-amber-500/20 rounded pointer-events-none"></div>
-
-              <!-- Glowing Header -->
-              <div class="mb-4 sm:mb-8 relative">
-                <h1 class="text-3xl sm:text-5xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-200 drop-shadow-[0_0_25px_rgba(251,191,36,0.5)] animate-shine font-serif uppercase tracking-tight leading-none mb-1 sm:mb-2">
-                  Thank You
-                </h1>
-                <h2 class="text-lg sm:text-2xl md:text-4xl text-stone-300 font-serif italic tracking-widest uppercase opacity-80 animate-fade-in-up delay-500">
-                  For Watching!
-                </h2>
-              </div>
-
-              <!-- All Dwarfs Showcase -->
-              <div class="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-8 mb-6 sm:mb-16 max-w-5xl">
-                ${dwarfsHtml}
-              </div>
-
-              <!-- Final Message -->
-              <p class="text-sm sm:text-lg md:text-xl text-stone-300 italic font-serif max-w-2xl mb-6 sm:mb-12 leading-relaxed animate-fade-in-up delay-1000 px-4">
-                "Schema theory teaches us that stories are never just words on a page — they are living conversations between the text and our own cultural imaginations."
-              </p>
-              
-              <!-- Restart Button -->
-              <button id="restart-btn" class="flex items-center gap-2 sm:gap-3 px-6 sm:px-10 py-3 sm:py-4 bg-gradient-to-r from-stone-700 to-stone-600 hover:from-stone-600 hover:to-stone-500 text-white rounded-sm font-bold shadow-lg transition-transform hover:scale-105 active:scale-95 border border-stone-500/50 uppercase tracking-wider sm:tracking-widest text-sm sm:text-base group animate-fade-in-up delay-1000">
-                <i data-lucide="rotate-ccw" class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-180 transition-transform duration-500"></i>
-                Start Over
-              </button>
-
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display font-bold text-white group-hover:text-amber-300 transition-colors">Article Overview</h3>
+              <p class="text-gray-400 text-sm mt-1">Stringham examines dwarfs across German sagas, medieval epics &amp; Grimm.</p>
             </div>
-          `;
+            <span class="text-gray-600 text-xl transition-transform topic-arrow">›</span>
+          </button>
+          <div class="topic-content hidden px-5 pb-5">
+            <div class="ml-11 space-y-3 border-l-2 border-amber-500/20 pl-4">
+              <div class="bg-amber-500/5 rounded-xl p-4 border border-amber-500/10">
+                <p class="text-gray-300 text-sm leading-relaxed"><strong class="text-amber-400">Author:</strong> Enikö Stringham</p>
+                <p class="text-gray-300 text-sm leading-relaxed mt-2">Examines dwarfs in German sagas, medieval epics, and fairy tales by the <strong class="text-amber-300">Brothers Grimm</strong>.</p>
+                <p class="text-gray-300 text-sm leading-relaxed mt-2">Traces dwarf figures from <em class="text-amber-200">Rudlieb</em> and the <em class="text-amber-200">Nibelungenlied</em> through Grimm's <em class="text-amber-200">Kinder- und Hausmärchen</em>.</p>
+              </div>
+              <p class="text-amber-200/80 text-sm font-medium italic bg-amber-500/5 rounded-lg p-3 border-l-4 border-amber-500/40">💡 Dwarfs shift between <strong>helper, villain, prophet, servant, and demonic figure</strong> across these texts.</p>
+            </div>
+          </div>
+        </div>
 
-          container.innerHTML = contentHtml;
-          
-          lucide.createIcons({ icons: lucide.icons });
+        <!-- Topic 2: Major Themes -->
+        <div class="study-card glass rounded-2xl overflow-hidden transition-all hover:border-amber-500/30 group" data-topic="dwarfs-2">
+          <button onclick="toggleTopic(this)" class="w-full p-5 flex items-start gap-4 text-left">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="w-7 h-7 rounded-lg bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center text-amber-400 transition-all topic-check" data-checked="false">
+                <span class="check-icon hidden text-sm font-bold">✓</span>
+                <span class="uncheck-icon text-xs font-bold">2</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display font-bold text-white group-hover:text-amber-300 transition-colors">Major Themes &amp; Concepts</h3>
+              <p class="text-gray-400 text-sm mt-1">7 key themes: earth, reciprocity, power, prophecy, moral ambiguity…</p>
+            </div>
+            <span class="text-gray-600 text-xl transition-transform topic-arrow">›</span>
+          </button>
+          <div class="topic-content hidden px-5 pb-5">
+            <div class="ml-11 space-y-2 border-l-2 border-amber-500/20 pl-4">
+              <div class="bg-amber-500/5 rounded-xl p-3 border border-amber-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">📜</span>
+                <div><strong class="text-amber-300 text-sm">1. Historical Continuity</strong><p class="text-gray-400 text-xs mt-0.5">Dwarfs appear in early medieval texts like Rudlieb and the Nibelungenlied.</p></div>
+              </div>
+              <div class="bg-amber-500/5 rounded-xl p-3 border border-amber-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">⛰️</span>
+                <div><strong class="text-amber-300 text-sm">2. Association with the Earth</strong><p class="text-gray-400 text-xs mt-0.5">Linked to mountains, mining, treasure, and hidden underground spaces.</p></div>
+              </div>
+              <div class="bg-amber-500/5 rounded-xl p-3 border border-amber-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">🤝</span>
+                <div><strong class="text-amber-300 text-sm">3. Reciprocity</strong><p class="text-gray-400 text-xs mt-0.5">Interactions involve exchange — treasure, protection, knowledge, or children.</p></div>
+              </div>
+              <div class="bg-amber-500/5 rounded-xl p-3 border border-amber-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">⚔️</span>
+                <div><strong class="text-amber-300 text-sm">4. Power &amp; Subjugation</strong><p class="text-gray-400 text-xs mt-0.5">In the Nibelungenlied, dwarfs may be subdued and forced into servitude.</p></div>
+              </div>
+              <div class="bg-amber-500/5 rounded-xl p-3 border border-amber-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">🔮</span>
+                <div><strong class="text-amber-300 text-sm">5. Wisdom &amp; Prophecy</strong><p class="text-gray-400 text-xs mt-0.5">Dwarfs sometimes possess future-telling abilities and hidden knowledge.</p></div>
+              </div>
+              <div class="bg-amber-500/5 rounded-xl p-3 border border-amber-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">🎭</span>
+                <div><strong class="text-amber-300 text-sm">6. Moral Ambiguity</strong><p class="text-gray-400 text-xs mt-0.5">Dwarfs are not purely good or evil; roles shift across narratives.</p></div>
+              </div>
+              <div class="bg-amber-500/5 rounded-xl p-3 border border-amber-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">📝</span>
+                <div><strong class="text-amber-300 text-sm">7. Grimm Revisions</strong><p class="text-gray-400 text-xs mt-0.5">Brothers Grimm shaped portrayals through scholarship and Romantic nationalism.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          const restartBtn = document.getElementById('restart-btn');
-          if (restartBtn) restartBtn.addEventListener('click', handleRestart);
+        <!-- Topic 3: Gilmour's 5 Categories -->
+        <div class="study-card glass rounded-2xl overflow-hidden transition-all hover:border-amber-500/30 group" data-topic="dwarfs-3">
+          <button onclick="toggleTopic(this)" class="w-full p-5 flex items-start gap-4 text-left">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="w-7 h-7 rounded-lg bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center text-amber-400 transition-all topic-check" data-checked="false">
+                <span class="check-icon hidden text-sm font-bold">✓</span>
+                <span class="uncheck-icon text-xs font-bold">3</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display font-bold text-white group-hover:text-amber-300 transition-colors">Gilmour's 5 Categories of Dwarfs</h3>
+              <p class="text-gray-400 text-sm mt-1">Unexpected Helper → Demonic Dwarf — know all five.</p>
+            </div>
+            <span class="text-gray-600 text-xl transition-transform topic-arrow">›</span>
+          </button>
+          <div class="topic-content hidden px-5 pb-5">
+            <div class="ml-11 space-y-2 border-l-2 border-amber-500/20 pl-4">
+              <div class="bg-green-500/5 rounded-xl p-3 border border-green-500/10 flex gap-3 items-start">
+                <span class="text-2xl flex-shrink-0">🤲</span>
+                <div><strong class="text-green-300 text-sm">1. The Unexpected Helper</strong><p class="text-gray-400 text-xs mt-0.5">Assists without asking for anything in return.</p><p class="text-gray-500 text-xs italic">e.g., The Elves and the Shoemaker, Snow White</p></div>
+              </div>
+              <div class="bg-blue-500/5 rounded-xl p-3 border border-blue-500/10 flex gap-3 items-start">
+                <span class="text-2xl flex-shrink-0">🫡</span>
+                <div><strong class="text-blue-300 text-sm">2. The Obedient Dwarf</strong><p class="text-gray-400 text-xs mt-0.5">Controlled by a human through magic.</p><p class="text-gray-500 text-xs italic">e.g., Das Blaue Licht</p></div>
+              </div>
+              <div class="bg-yellow-500/5 rounded-xl p-3 border border-yellow-500/10 flex gap-3 items-start">
+                <span class="text-2xl flex-shrink-0">🎁</span>
+                <div><strong class="text-yellow-300 text-sm">3. The Volunteer Giver</strong><p class="text-gray-400 text-xs mt-0.5">Offers help but expects equal value in return.</p></div>
+              </div>
+              <div class="bg-red-500/5 rounded-xl p-3 border border-red-500/10 flex gap-3 items-start">
+                <span class="text-2xl flex-shrink-0">😈</span>
+                <div><strong class="text-red-300 text-sm">4. The Demonic Dwarf</strong><p class="text-gray-400 text-xs mt-0.5">Abductor or manipulator.</p><p class="text-gray-500 text-xs italic">e.g., Rumpelstiltskin</p></div>
+              </div>
+              <div class="bg-purple-500/5 rounded-xl p-3 border border-purple-500/10 flex gap-3 items-start">
+                <span class="text-2xl flex-shrink-0">💀</span>
+                <div><strong class="text-purple-300 text-sm">5. The Ungrateful/Evil Dwarf</strong><p class="text-gray-400 text-xs mt-0.5">Associated with greed and the Devil.</p><p class="text-gray-500 text-xs italic">e.g., Schneewittchen und Rosenrot</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          // Attach sound effects to dwarfs on end slide
-          attachDwarfSounds();
+        <!-- Topic 4: Important Texts -->
+        <div class="study-card glass rounded-2xl overflow-hidden transition-all hover:border-amber-500/30 group" data-topic="dwarfs-4">
+          <button onclick="toggleTopic(this)" class="w-full p-5 flex items-start gap-4 text-left">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="w-7 h-7 rounded-lg bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center text-amber-400 transition-all topic-check" data-checked="false">
+                <span class="check-icon hidden text-sm font-bold">✓</span>
+                <span class="uncheck-icon text-xs font-bold">4</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display font-bold text-white group-hover:text-amber-300 transition-colors">Important Texts</h3>
+              <p class="text-gray-400 text-sm mt-1">Know 6 key texts and what each represents.</p>
+            </div>
+            <span class="text-gray-600 text-xl transition-transform topic-arrow">›</span>
+          </button>
+          <div class="topic-content hidden px-5 pb-5">
+            <div class="ml-11 space-y-2 border-l-2 border-amber-500/20 pl-4">
+              <div class="bg-amber-500/5 rounded-lg p-3 border border-amber-500/10"><strong class="text-amber-300 text-sm">Rudlieb</strong><span class="text-gray-400 text-sm"> — Early German dwarf story involving treasure and mistrust.</span></div>
+              <div class="bg-amber-500/5 rounded-lg p-3 border border-amber-500/10"><strong class="text-amber-300 text-sm">Nibelungenlied</strong><span class="text-gray-400 text-sm"> — Dwarfs tied to treasure, invisibility, and subjugation.</span></div>
+              <div class="bg-amber-500/5 rounded-lg p-3 border border-amber-500/10"><strong class="text-amber-300 text-sm">Snow White</strong><span class="text-gray-400 text-sm"> — Dwarfs as miners, protectors, guardians of domestic stability.</span></div>
+              <div class="bg-amber-500/5 rounded-lg p-3 border border-amber-500/10"><strong class="text-amber-300 text-sm">The Elves and the Shoemaker</strong><span class="text-gray-400 text-sm"> — Helpful dwarfs assisting secretly.</span></div>
+              <div class="bg-amber-500/5 rounded-lg p-3 border border-amber-500/10"><strong class="text-amber-300 text-sm">Das Blaue Licht</strong><span class="text-gray-400 text-sm"> — Dwarf under magical control.</span></div>
+              <div class="bg-amber-500/5 rounded-lg p-3 border border-amber-500/10"><strong class="text-amber-300 text-sm">Rumpelstiltskin</strong><span class="text-gray-400 text-sm"> — Demonic dwarf demanding a child in exchange for help.</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic 5: Key Points -->
+        <div class="study-card glass rounded-2xl overflow-hidden transition-all hover:border-amber-500/30 group" data-topic="dwarfs-5">
+          <button onclick="toggleTopic(this)" class="w-full p-5 flex items-start gap-4 text-left">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="w-7 h-7 rounded-lg bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center text-amber-400 transition-all topic-check" data-checked="false">
+                <span class="check-icon hidden text-sm font-bold">✓</span>
+                <span class="uncheck-icon text-xs font-bold">5</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display font-bold text-white group-hover:text-amber-300 transition-colors">Key Points to Remember ⭐</h3>
+              <p class="text-gray-400 text-sm mt-1">The 6 must-know facts for the quiz.</p>
+            </div>
+            <span class="text-gray-600 text-xl transition-transform topic-arrow">›</span>
+          </button>
+          <div class="topic-content hidden px-5 pb-5">
+            <div class="ml-11 space-y-2 border-l-2 border-amber-500/20 pl-4">
+              <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-lg p-3 border-l-4 border-amber-400 flex gap-2"><span>✅</span><span class="text-gray-300 text-sm">Dwarfs originate in <strong class="text-white">Germanic myth and medieval literature</strong> before Grimm tales.</span></div>
+              <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-lg p-3 border-l-4 border-amber-400 flex gap-2"><span>✅</span><span class="text-gray-300 text-sm">Frequently associated with <strong class="text-white">mountains, treasure, mining, hidden knowledge</strong>.</span></div>
+              <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-lg p-3 border-l-4 border-amber-400 flex gap-2"><span>✅</span><span class="text-gray-300 text-sm"><strong class="text-white">Reciprocity and exchange</strong> are central to dwarf-human interactions.</span></div>
+              <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-lg p-3 border-l-4 border-amber-400 flex gap-2"><span>✅</span><span class="text-gray-300 text-sm">Dwarfs shift roles: <strong class="text-white">helper, servant, prophet, villain, demonic figure</strong>.</span></div>
+              <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-lg p-3 border-l-4 border-amber-400 flex gap-2"><span>✅</span><span class="text-gray-300 text-sm"><strong class="text-white">Grimms' scholarly revisions</strong> influenced modern understanding.</span></div>
+              <div class="bg-gradient-to-r from-amber-500/10 to-transparent rounded-lg p-3 border-l-4 border-amber-400 flex gap-2"><span>✅</span><span class="text-gray-300 text-sm"><strong class="text-white">Mystery and limited knowledge</strong> = enduring enchantment of dwarfs.</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION 2: Culture, Fairy Tales, and 7 Zwerge -->
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="dwarf-avatar bg-orange-500/80 text-white animate-float" style="animation-delay:0.5s">�</div>
+        <div>
+          <h2 class="font-display font-bold text-xl sm:text-2xl bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Part 2: Culture, Fairy Tales &amp; 7 Zwerge</h2>
+          <p class="text-gray-400 text-xs font-mono">Cookie serves up knowledge • Scholarly Article + Film Analysis • 5 topics</p>
+        </div>
+      </div>
+
+      <div class="grid gap-4" id="culture-topics">
+
+        <!-- Topic 6: Core Argument -->
+        <div class="study-card glass rounded-2xl overflow-hidden transition-all hover:border-purple-500/30 group" data-topic="culture-1">
+          <button onclick="toggleTopic(this)" class="w-full p-5 flex items-start gap-4 text-left">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="w-7 h-7 rounded-lg bg-purple-500/20 border-2 border-purple-500/40 flex items-center justify-center text-purple-400 transition-all topic-check" data-checked="false">
+                <span class="check-icon hidden text-sm font-bold">✓</span>
+                <span class="uncheck-icon text-xs font-bold">6</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display font-bold text-white group-hover:text-purple-300 transition-colors">Core Argument of the Scholarly Article</h3>
+              <p class="text-gray-400 text-sm mt-1">Culture shapes how readers interpret stories — reading is NOT neutral.</p>
+            </div>
+            <span class="text-gray-600 text-xl transition-transform topic-arrow">›</span>
+          </button>
+          <div class="topic-content hidden px-5 pb-5">
+            <div class="ml-11 space-y-3 border-l-2 border-purple-500/20 pl-4">
+              <div class="bg-purple-500/5 rounded-xl p-4 border border-purple-500/10">
+                <p class="text-gray-300 text-sm leading-relaxed"><strong class="text-purple-300">Culture shapes how readers interpret stories.</strong> Reading is not neutral.</p>
+                <p class="text-gray-300 text-sm leading-relaxed mt-2">Readers rely on <strong class="text-purple-300">culturally embedded schemata</strong> (mental frameworks from socialization) to construct meaning.</p>
+                <p class="text-gray-300 text-sm leading-relaxed mt-2">Schemata influence: <strong class="text-purple-300">character evaluation</strong>, <strong class="text-purple-300">plot interpretation</strong>, and <strong class="text-purple-300">inference-making</strong>.</p>
+              </div>
+              <p class="text-purple-200/80 text-sm font-medium italic bg-purple-500/5 rounded-lg p-3 border-l-4 border-purple-500/40">💡 Interpretation differences across cultures are <strong>patterned and measurable</strong>.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic 7: Key Concepts -->
+        <div class="study-card glass rounded-2xl overflow-hidden transition-all hover:border-purple-500/30 group" data-topic="culture-2">
+          <button onclick="toggleTopic(this)" class="w-full p-5 flex items-start gap-4 text-left">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="w-7 h-7 rounded-lg bg-purple-500/20 border-2 border-purple-500/40 flex items-center justify-center text-purple-400 transition-all topic-check" data-checked="false">
+                <span class="check-icon hidden text-sm font-bold">✓</span>
+                <span class="uncheck-icon text-xs font-bold">7</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display font-bold text-white group-hover:text-purple-300 transition-colors">Key Concepts (6 Terms)</h3>
+              <p class="text-gray-400 text-sm mt-1">Schema Theory, Top-Down Processing, Situation Model…</p>
+            </div>
+            <span class="text-gray-600 text-xl transition-transform topic-arrow">›</span>
+          </button>
+          <div class="topic-content hidden px-5 pb-5">
+            <div class="ml-11 space-y-2 border-l-2 border-purple-500/20 pl-4">
+              <div class="bg-purple-500/5 rounded-xl p-3 border border-purple-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">🧠</span>
+                <div><strong class="text-purple-300 text-sm">Schema Theory</strong><p class="text-gray-400 text-xs mt-0.5">Cultural knowledge organized into mental frameworks guiding interpretation.</p></div>
+              </div>
+              <div class="bg-purple-500/5 rounded-xl p-3 border border-purple-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">⬇️</span>
+                <div><strong class="text-purple-300 text-sm">Top-Down Processing</strong><p class="text-gray-400 text-xs mt-0.5">Using prior knowledge and expectations to interpret a text.</p></div>
+              </div>
+              <div class="bg-purple-500/5 rounded-xl p-3 border border-purple-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">🗺️</span>
+                <div><strong class="text-purple-300 text-sm">Situation Model</strong><p class="text-gray-400 text-xs mt-0.5">Mental representation of characters, events, time, and space built during reading.</p></div>
+              </div>
+              <div class="bg-purple-500/5 rounded-xl p-3 border border-purple-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">🔍</span>
+                <div><strong class="text-purple-300 text-sm">Inference-Making</strong><p class="text-gray-400 text-xs mt-0.5">Filling narrative gaps using reasoning and prior knowledge.</p></div>
+              </div>
+              <div class="bg-purple-500/5 rounded-xl p-3 border border-purple-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">🌍</span>
+                <div><strong class="text-purple-300 text-sm">Individualism vs. Collectivism</strong><p class="text-gray-400 text-xs mt-0.5">Cultural value systems shaping character evaluation.</p></div>
+              </div>
+              <div class="bg-purple-500/5 rounded-xl p-3 border border-purple-500/10 flex gap-3 items-start">
+                <span class="text-lg flex-shrink-0">📊</span>
+                <div><strong class="text-purple-300 text-sm">Cultural Variable</strong><p class="text-gray-400 text-xs mt-0.5">Literary studies must include culture as a factor.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic 8: Hypotheses -->
+        <div class="study-card glass rounded-2xl overflow-hidden transition-all hover:border-purple-500/30 group" data-topic="culture-3">
+          <button onclick="toggleTopic(this)" class="w-full p-5 flex items-start gap-4 text-left">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="w-7 h-7 rounded-lg bg-purple-500/20 border-2 border-purple-500/40 flex items-center justify-center text-purple-400 transition-all topic-check" data-checked="false">
+                <span class="check-icon hidden text-sm font-bold">✓</span>
+                <span class="uncheck-icon text-xs font-bold">8</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display font-bold text-white group-hover:text-purple-300 transition-colors">Hypotheses &amp; Findings</h3>
+              <p class="text-gray-400 text-sm mt-1">What the researchers predicted vs. what the data showed.</p>
+            </div>
+            <span class="text-gray-600 text-xl transition-transform topic-arrow">›</span>
+          </button>
+          <div class="topic-content hidden px-5 pb-5">
+            <div class="ml-11 space-y-3 border-l-2 border-purple-500/20 pl-4">
+              <div class="bg-blue-500/5 rounded-xl p-4 border border-blue-500/10">
+                <p class="text-blue-300 text-sm font-bold mb-1">Hypothesis 1</p>
+                <p class="text-gray-400 text-sm">Western readers → <strong class="text-white">individualistic</strong> interpretations<br>East Asian readers → <strong class="text-white">socially oriented</strong> interpretations</p>
+              </div>
+              <div class="bg-pink-500/5 rounded-xl p-4 border border-pink-500/10">
+                <p class="text-pink-300 text-sm font-bold mb-1">Hypothesis 2</p>
+                <p class="text-gray-400 text-sm">Differences in plot preference: <strong class="text-white">adventurous vs. restrained</strong> development.</p>
+              </div>
+              <div class="bg-green-500/5 rounded-xl p-4 border border-green-500/10">
+                <p class="text-green-300 text-sm font-bold mb-1">📊 Results</p>
+                <p class="text-gray-400 text-sm"><strong class="text-white">Statistically significant differences</strong> in inference-making → <strong class="text-green-300">culture influences deep cognitive processes</strong> in reading.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic 9: Grimm vs 7 Zwerge -->
+        <div class="study-card glass rounded-2xl overflow-hidden transition-all hover:border-purple-500/30 group" data-topic="culture-4">
+          <button onclick="toggleTopic(this)" class="w-full p-5 flex items-start gap-4 text-left">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="w-7 h-7 rounded-lg bg-purple-500/20 border-2 border-purple-500/40 flex items-center justify-center text-purple-400 transition-all topic-check" data-checked="false">
+                <span class="check-icon hidden text-sm font-bold">✓</span>
+                <span class="uncheck-icon text-xs font-bold">9</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display font-bold text-white group-hover:text-purple-300 transition-colors">Grimm's Snow White vs. 7 Zwerge</h3>
+              <p class="text-gray-400 text-sm mt-1">Traditional fairy tale vs. parody and adaptation.</p>
+            </div>
+            <span class="text-gray-600 text-xl transition-transform topic-arrow">›</span>
+          </button>
+          <div class="topic-content hidden px-5 pb-5">
+            <div class="ml-11 border-l-2 border-purple-500/20 pl-4">
+              <div class="grid sm:grid-cols-2 gap-3">
+                <div class="bg-amber-500/5 rounded-xl p-4 border border-amber-500/10">
+                  <h4 class="text-amber-300 font-bold text-sm mb-2 flex items-center gap-2">📕 Grimm's Snow White</h4>
+                  <ul class="space-y-1.5 text-gray-400 text-xs">
+                    <li class="flex gap-2"><span class="text-amber-400">•</span> Moral clarity</li>
+                    <li class="flex gap-2"><span class="text-amber-400">•</span> Traditional gender roles</li>
+                    <li class="flex gap-2"><span class="text-amber-400">•</span> Punishment &amp; reward structures</li>
+                    <li class="flex gap-2"><span class="text-amber-400">•</span> Structured fairy tale logic</li>
+                    <li class="flex gap-2"><span class="text-amber-400">•</span> Heroism &amp; virtue clearly defined</li>
+                  </ul>
+                </div>
+                <div class="bg-pink-500/5 rounded-xl p-4 border border-pink-500/10">
+                  <h4 class="text-pink-300 font-bold text-sm mb-2 flex items-center gap-2">🎬 7 Zwerge (2004)</h4>
+                  <ul class="space-y-1.5 text-gray-400 text-xs">
+                    <li class="flex gap-2"><span class="text-pink-400">•</span> Parody of Snow White</li>
+                    <li class="flex gap-2"><span class="text-pink-400">•</span> Insecure, socially awkward dwarfs</li>
+                    <li class="flex gap-2"><span class="text-pink-400">•</span> Exaggerates conventions</li>
+                    <li class="flex gap-2"><span class="text-pink-400">•</span> Destabilizes masculinity/heroism</li>
+                    <li class="flex gap-2"><span class="text-pink-400">•</span> Heroism = collective &amp; flawed</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic 10: Comparative Themes -->
+        <div class="study-card glass rounded-2xl overflow-hidden transition-all hover:border-purple-500/30 group" data-topic="culture-5">
+          <button onclick="toggleTopic(this)" class="w-full p-5 flex items-start gap-4 text-left">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="w-7 h-7 rounded-lg bg-purple-500/20 border-2 border-purple-500/40 flex items-center justify-center text-purple-400 transition-all topic-check" data-checked="false">
+                <span class="check-icon hidden text-sm font-bold">✓</span>
+                <span class="uncheck-icon text-xs font-bold">10</span>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-display font-bold text-white group-hover:text-purple-300 transition-colors">Comparative Themes ⭐</h3>
+              <p class="text-gray-400 text-sm mt-1">Big-picture connections across all material.</p>
+            </div>
+            <span class="text-gray-600 text-xl transition-transform topic-arrow">›</span>
+          </button>
+          <div class="topic-content hidden px-5 pb-5">
+            <div class="ml-11 space-y-2 border-l-2 border-purple-500/20 pl-4">
+              <div class="bg-gradient-to-r from-purple-500/10 to-transparent rounded-lg p-3 border-l-4 border-purple-400 flex gap-2"><span>🔄</span><span class="text-gray-300 text-sm">Grimm = <strong class="text-white">stable moral structures</strong>; 7 Zwerge = <strong class="text-white">destabilizes through satire</strong>.</span></div>
+              <div class="bg-gradient-to-r from-purple-500/10 to-transparent rounded-lg p-3 border-l-4 border-purple-400 flex gap-2"><span>📐</span><span class="text-gray-300 text-sm">Interpretation differences are <strong class="text-white">culturally structured</strong>.</span></div>
+              <div class="bg-gradient-to-r from-purple-500/10 to-transparent rounded-lg p-3 border-l-4 border-purple-400 flex gap-2"><span>🦸</span><span class="text-gray-300 text-sm">Heroism: <strong class="text-white">individual moral clarity</strong> (Grimm) → <strong class="text-white">comedic group dynamics</strong> (7 Zwerge).</span></div>
+              <div class="bg-gradient-to-r from-purple-500/10 to-transparent rounded-lg p-3 border-l-4 border-purple-400 flex gap-2"><span>🧠</span><span class="text-gray-300 text-sm"><strong class="text-white">Cultural schemata</strong> influence how parody is interpreted.</span></div>
+              <div class="bg-gradient-to-r from-purple-500/10 to-transparent rounded-lg p-3 border-l-4 border-purple-400 flex gap-2"><span>📖</span><span class="text-gray-300 text-sm">Fairy tales are <strong class="text-white">adaptable narratives</strong> shaped by historical &amp; cultural context.</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== FLASHCARDS MODE ======== -->
+  <div id="view-flashcards" class="view hidden">
+    <div class="text-center mb-6">
+      <div class="flex justify-center mb-3"><div class="dwarf-avatar bg-sky-400/80 text-white">☁️</div></div>
+      <h2 class="font-display font-bold text-2xl text-white mb-2">🃏 Cloudy's Flashcard Deck</h2>
+      <p class="text-gray-400 text-sm">Cloudy the Dreamer helps you memorize! Tap to flip • Use arrows to navigate</p>
+      <div class="flex justify-center gap-3 mt-3">
+        <span id="fc-progress" class="font-mono text-purple-400 text-sm">1 / 20</span>
+        <span class="text-gray-600">•</span>
+        <span id="fc-known" class="font-mono text-green-400 text-sm">0 known</span>
+      </div>
+    </div>
+
+    <div class="flex justify-center mb-6">
+      <div id="flashcard" class="flip-card w-full max-w-lg cursor-pointer" onclick="flipCard()" style="min-height:320px;">
+        <div class="flip-card-inner relative w-full" style="min-height:320px;">
+          <div class="flip-card-front absolute inset-0 glass-strong rounded-2xl p-8 flex flex-col items-center justify-center text-center border-2 border-amber-500/20 hover:border-amber-500/40 transition-colors">
+            <span id="fc-category" class="tag bg-amber-500/20 text-amber-300 border border-amber-500/20 mb-4">Category</span>
+            <p id="fc-front" class="font-display font-bold text-xl sm:text-2xl text-white leading-snug">Question</p>
+            <p class="text-gray-500 text-xs mt-6 flex items-center gap-1">tap to flip 👆</p>
+          </div>
+          <div class="flip-card-back absolute inset-0 glass-strong rounded-2xl p-8 flex flex-col items-center justify-center text-center border-2 border-green-500/20">
+            <p id="fc-back" class="text-gray-200 text-base sm:text-lg leading-relaxed">Answer</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-center gap-3 sm:gap-4">
+      <button onclick="prevCard()" class="px-4 sm:px-5 py-3 rounded-xl glass border border-white/10 hover:border-white/30 transition font-bold text-lg" title="Previous">←</button>
+      <button onclick="markKnown()" class="px-5 sm:px-6 py-3 rounded-xl bg-green-500/20 border border-green-500/30 hover:bg-green-500/30 transition text-green-300 font-bold text-sm flex items-center gap-2">✓ Got it!</button>
+      <button onclick="shuffleCards()" class="px-4 sm:px-5 py-3 rounded-xl glass border border-white/10 hover:border-white/30 transition text-lg" title="Shuffle">🔀</button>
+      <button onclick="nextCard()" class="px-4 sm:px-5 py-3 rounded-xl glass border border-white/10 hover:border-white/30 transition font-bold text-lg" title="Next">→</button>
+    </div>
+  </div>
+
+  <!-- ======== QUIZ MODE ======== -->
+  <div id="view-quiz" class="view hidden">
+    <div class="text-center mb-6">
+      <div class="flex justify-center mb-3"><div class="dwarf-avatar bg-yellow-300/80 text-gray-900">⚡</div></div>
+      <h2 class="font-display font-bold text-2xl text-white mb-2">⚡ Speedy's Quick Quiz</h2>
+      <p class="text-gray-400 text-sm">Speedy challenges you — think fast, earn gems!</p>
+      <div class="flex justify-center gap-4 mt-3">
+        <span id="quiz-progress" class="font-mono text-purple-400 text-sm">Question 1 / 15</span>
+        <span class="text-gray-600">•</span>
+        <span id="quiz-score" class="font-mono text-green-400 text-sm">0 correct</span>
+      </div>
+    </div>
+    <div id="quiz-container" class="max-w-2xl mx-auto"></div>
+    <div id="quiz-results" class="hidden max-w-2xl mx-auto"></div>
+  </div>
+
+  <!-- ======== MATCHING MODE ======== -->
+  <div id="view-matching" class="view hidden">
+    <div class="text-center mb-6">
+      <div class="flex justify-center mb-3"><div class="dwarf-avatar bg-red-500/80 text-white">😊</div></div>
+      <h2 class="font-display font-bold text-2xl text-white mb-2">🧩 Bubi's Match Game</h2>
+      <p class="text-gray-400 text-sm">Bubi the Innocent Hero wants to help — match the pairs!</p>
+      <div class="flex justify-center gap-4 mt-3">
+        <span id="match-score" class="font-mono text-green-400 text-sm">0 / 8 matched</span>
+        <span class="text-gray-600">•</span>
+        <span id="match-timer" class="font-mono text-amber-400 text-sm">0:00</span>
+      </div>
+    </div>
+    <div id="matching-container" class="max-w-3xl mx-auto grid sm:grid-cols-2 gap-6"></div>
+    <div class="text-center mt-6">
+      <button onclick="initMatching()" class="px-5 py-2.5 rounded-xl glass border border-white/10 hover:border-white/30 transition text-gray-400 text-sm font-semibold flex items-center gap-2 mx-auto">🔄 Reset Game</button>
+    </div>
+  </div>
+
+  <!-- ======== ESSAY PREP MODE ======== -->
+  <div id="view-essay" class="view hidden">
+    <div class="text-center mb-6">
+      <div class="flex justify-center mb-3"><div class="dwarf-avatar bg-indigo-500/80 text-white">🤨</div></div>
+      <h2 class="font-display font-bold text-2xl text-white mb-2">✍️ Ralfie's Essay Workshop</h2>
+      <p class="text-gray-400 text-sm">Ralfie the Skeptic demands strong arguments — practice here! Drafts auto-save.</p>
+    </div>
+    <div class="max-w-2xl mx-auto space-y-4" id="essay-container"></div>
+  </div>
+
+</main>
+
+<!-- Back to Top Button -->
+<div class="fixed bottom-6 right-6 z-40">
+  <button onclick="scrollToTop()" class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-transform text-xl" title="Back to the top of the mine!">⛏️</button>
+</div>
+
+<!-- ============================================================ -->
+<!--  JAVASCRIPT                                                  -->
+<!-- ============================================================ -->
+<script>
+// ============================================
+// DATA
+// ============================================
+
+const flashcardData = [
+  { category: "🧠 Concept", q: "What is Schema Theory?", a: "Cultural knowledge organized into mental frameworks that guide how we interpret texts and stories." },
+  { category: "🧠 Concept", q: "What is Top-Down Processing?", a: "Using prior knowledge and expectations to interpret a text, rather than building understanding purely from the text itself." },
+  { category: "🧠 Concept", q: "What is a Situation Model?", a: "The mental representation of characters, events, time, and space that a reader builds during reading." },
+  { category: "🧠 Concept", q: "What is Inference-Making?", a: "Filling narrative gaps using reasoning and prior cultural knowledge when a story doesn't explicitly state something." },
+  { category: "🧠 Concept", q: "What is the Individualism vs. Collectivism framework?", a: "Cultural value systems that shape character evaluation — Western cultures tend toward individualism, East Asian toward collectivism." },
+  { category: "🧠 Concept", q: "What is a Cultural Variable?", a: "The argument that literary studies must include culture as a factor in how texts are interpreted." },
+  { category: "⛏️ Dwarfs", q: "Who is the author of the Dwarfs article?", a: "Enikö Stringham — traces dwarf figures from medieval German literature through Grimm fairy tales." },
+  { category: "⛏️ Dwarfs", q: "What is the 'Unexpected Helper' dwarf type?", a: "Assists without asking for anything in return, like the dwarfs in The Elves and the Shoemaker or Snow White." },
+  { category: "⛏️ Dwarfs", q: "What is the 'Demonic Dwarf' category?", a: "Acts as an abductor or manipulator — Rumpelstiltskin is the key example." },
+  { category: "⛏️ Dwarfs", q: "What is the 'Obedient Dwarf' category?", a: "A dwarf controlled by a human through magic, as in Das Blaue Licht." },
+  { category: "⛏️ Dwarfs", q: "What role do dwarfs play in the Nibelungenlied?", a: "Tied to treasure, invisibility, and subjugation — they may be subdued and forced into servitude." },
+  { category: "⛏️ Dwarfs", q: "What are dwarfs frequently associated with?", a: "Mountains, mining, treasure, hidden underground spaces, and secret knowledge." },
+  { category: "⛏️ Dwarfs", q: "What is 'reciprocity' in dwarf-human interactions?", a: "Interactions often involve exchange — treasure, protection, knowledge, or even children." },
+  { category: "🎬 7 Zwerge", q: "How does 7 Zwerge reimagine Snow White?", a: "As a parody. The dwarfs are insecure and socially awkward rather than traditionally heroic. It exaggerates fairy tale conventions." },
+  { category: "🎬 7 Zwerge", q: "How does heroism differ between Grimm and 7 Zwerge?", a: "Grimm: individual moral clarity. 7 Zwerge: comedic group dynamics where heroism is collective and flawed." },
+  { category: "🎬 7 Zwerge", q: "What does 7 Zwerge destabilize?", a: "Expectations of masculinity and heroism — showing these concepts are culturally constructed, not fixed." },
+  { category: "📊 Research", q: "What did Hypothesis 1 predict?", a: "Western readers = individualistic interpretations; East Asian readers = socially oriented interpretations." },
+  { category: "📊 Research", q: "What did the research results show?", a: "Statistically significant differences in inference-making, supporting that culture influences deep cognitive processes." },
+  { category: "📕 Grimm", q: "What does Grimm's Snow White emphasize?", a: "Moral clarity, traditional gender roles, punishment and reward structures, and structured fairy tale logic." },
+  { category: "🔄 Themes", q: "Why are fairy tales 'adaptable narratives'?", a: "They are shaped by historical and cultural context — the same story carries different meanings depending on when/where it's told." },
+];
+
+const quizData = [
+  { q: "According to schema theory, what are 'schemata'?", options: ["Plot structures in fairy tales", "Culturally embedded mental frameworks guiding interpretation", "German literary traditions", "Types of dwarf characters"], correct: 1 },
+  { q: "Which dwarf category assists without asking for anything?", options: ["The Obedient Dwarf", "The Volunteer Giver", "The Unexpected Helper", "The Demonic Dwarf"], correct: 2 },
+  { q: "In the Nibelungenlied, dwarfs are associated with:", options: ["Comedy and satire", "Treasure, invisibility, and subjugation", "Cooking and domestic work", "Religious authority"], correct: 1 },
+  { q: "What does 'top-down processing' mean in reading?", options: ["Reading from the first page to the last", "Using prior knowledge to interpret a text", "Analyzing only surface-level meaning", "Translating between languages"], correct: 1 },
+  { q: "How does 7 Zwerge portray its dwarfs?", options: ["As wise prophets", "As evil villains", "As insecure and socially awkward", "As traditional heroes"], correct: 2 },
+  { q: "Rumpelstiltskin is an example of which category?", options: ["The Unexpected Helper", "The Volunteer Giver", "The Obedient Dwarf", "The Demonic Dwarf"], correct: 3 },
+  { q: "What did Hypothesis 1 predict?", options: ["All readers interpret fairy tales the same way", "Western = individualistic, East Asian = socially oriented", "Children prefer Grimm over modern versions", "German tales are more popular than Asian ones"], correct: 1 },
+  { q: "What central theme governs dwarf-human interactions?", options: ["Violence and warfare", "Reciprocity and exchange", "Religious devotion", "Romantic love"], correct: 1 },
+  { q: "Grimm's Snow White emphasizes:", options: ["Parody and satire", "Moral ambiguity", "Moral clarity and punishment/reward structures", "Comedic group dynamics"], correct: 2 },
+  { q: "The 'Obedient Dwarf' is controlled by:", options: ["A king's decree", "A human through magic", "The Brothers Grimm", "Other dwarfs"], correct: 1 },
+  { q: "What makes inference-making culturally variable?", options: ["Different grammar across languages", "Culture shapes cognitive processes for filling narrative gaps", "Some cultures can't read fairy tales", "It isn't culturally variable"], correct: 1 },
+  { q: "How does heroism shift from Grimm to 7 Zwerge?", options: ["From collective to individual", "From individual moral clarity to comedic group dynamics", "From comedy to tragedy", "It doesn't change"], correct: 1 },
+  { q: "The Brothers Grimm shaped dwarfs through:", options: ["Scientific experiments", "Scholarship and Romantic nationalism", "Film production", "Political speeches"], correct: 1 },
+  { q: "What is a 'situation model'?", options: ["A physical model of a setting", "Mental representation of characters, events, time & space during reading", "A diagram of relationships", "A map in fairy tales"], correct: 1 },
+  { q: "Why include culture as a variable in literary studies?", options: ["Makes studies longer", "Interpretation differences are patterned and measurable", "German literature is superior", "Readers don't have opinions"], correct: 1 },
+];
+
+const matchingPairs = [
+  { term: "Schema Theory", def: "Cultural mental frameworks guiding interpretation" },
+  { term: "Unexpected Helper", def: "Assists without asking anything in return" },
+  { term: "Demonic Dwarf", def: "Abductor or manipulator (Rumpelstiltskin)" },
+  { term: "Nibelungenlied", def: "Epic: treasure, invisibility, subjugation" },
+  { term: "7 Zwerge", def: "Parody with insecure, awkward dwarfs" },
+  { term: "Reciprocity", def: "Exchange central to dwarf-human interactions" },
+  { term: "Situation Model", def: "Mental representation built during reading" },
+  { term: "Top-Down Processing", def: "Using prior knowledge to interpret text" },
+];
+
+const essayQuestions = [
+  { section: "⛏️ Dwarfs", q: "How does Stringham trace the development of dwarfs from medieval epics to Grimm fairy tales?", hints: ["Start with Rudlieb & Nibelungenlied", "Show how roles evolved over time", "End with Grimm's Romantic nationalism influence"] },
+  { section: "⛏️ Dwarfs", q: "Explain the significance of reciprocity in dwarf-human relationships.", hints: ["Define reciprocity in this context", "Give examples: Rumpelstiltskin, Elves & Shoemaker", "Discuss how exchange shapes narrative"] },
+  { section: "⛏️ Dwarfs", q: "Compare the dwarfs in Snow White to those in the Nibelungenlied.", hints: ["Snow White: miners, protectors, domestic stability", "Nibelungenlied: treasure, invisibility, subjugation", "What changed between these portrayals?"] },
+  { section: "⛏️ Dwarfs", q: "How do Grimm revisions shape modern perceptions of dwarfs?", hints: ["Romantic nationalism context", "Scholarly editing choices", "Impact on modern fairy tale reading"] },
+  { section: "⛏️ Dwarfs", q: "Why is mystery important to the enchantment of dwarf figures?", hints: ["Limited knowledge creates fascination", "Dwarfs exist at edges of human understanding", "Mystery preserves narrative power"] },
+  { section: "🎬 Culture", q: "How does schema theory explain cultural differences in interpretation?", hints: ["Define schemata", "Explain culturally embedded frameworks", "Connect to measurable differences"] },
+  { section: "🎬 Culture", q: "How does 7 Zwerge parody traditional heroism?", hints: ["Compare to Grimm's clear heroism", "Insecure, awkward dwarfs", "Collective, flawed heroism"] },
+  { section: "🎬 Culture", q: "What evidence supports culture influencing inference-making?", hints: ["Statistically significant results", "Different situation models across cultures", "Deep cognitive processes affected"] },
+  { section: "🎬 Culture", q: "How does individualism vs. collectivism affect character evaluation?", hints: ["Western: independence & initiative admired", "East Asian: harmony & social responsibility", "Same character judged differently"] },
+  { section: "🎬 Culture", q: "Why should culture be a variable in literary studies?", hints: ["Interpretation is not neutral", "Patterned, measurable differences", "Missing culture = incomplete analysis"] },
+];
+
+// ============================================
+// STATE
+// ============================================
+let xp = 0, level = 1, streak = 0, bestStreak = 0;
+let topicsChecked = new Set();
+const totalTopics = 10;
+
+// Flashcard state
+let fcIndex = 0, fcKnown = new Set();
+let fcOrder = [...Array(flashcardData.length).keys()];
+
+// Quiz state
+let quizIndex = 0, quizCorrect = 0, quizAnswered = new Set();
+let quizOrder = [...Array(quizData.length).keys()].sort(() => Math.random() - 0.5);
+
+// Matching state
+let matchSelected = null, matchedPairs = new Set(), matchStartTime = null, matchTimerInterval = null;
+
+// Timer state
+let timerMinutes = 25, timerSeconds = 0, timerRunning = false, timerInterval = null, timerTotalSeconds = 25 * 60;
+
+// Achievements
+let achievements = new Set();
+
+// ============================================
+// UTILITIES
+// ============================================
+
+function addXP(amount) {
+  xp += amount;
+  const xpForLevel = level * 100;
+  const container = document.getElementById('xp-fly-container');
+  const fly = document.createElement('div');
+  fly.className = 'animate-xp-fly font-mono font-bold text-amber-400 text-sm';
+  fly.textContent = `+${amount} XP`;
+  container.appendChild(fly);
+  setTimeout(() => fly.remove(), 1200);
+
+  if (xp >= xpForLevel) {
+    xp -= xpForLevel;
+    level++;
+    document.getElementById('level-display').textContent = `Lv ${level}`;
+    showAchievement('👑', 'Level Up!', `You reached Level ${level}!`);
+    confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 }, colors: ['#fbbf24', '#f97316', '#ef4444', '#a78bfa', '#38bdf8'] });
+  }
+  document.getElementById('xp-display').textContent = `${xp} XP`;
+  document.getElementById('xp-bar').style.width = `${(xp / (level * 100)) * 100}%`;
+}
+
+function updateStreak(correct) {
+  if (correct) {
+    streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    if (streak === 3 && !achievements.has('s3')) { achievements.add('s3'); showAchievement('⛏️', '3 Gems Found!', 'Three in a row — the mine glows!'); }
+    if (streak === 5 && !achievements.has('s5')) { achievements.add('s5'); showAchievement('��', '5 Streak!', "Sunny says: You're shining bright!"); }
+    if (streak === 10 && !achievements.has('s10')) { achievements.add('s10'); showAchievement('�', 'MINE KING!', 'Tschakko salutes your 10 streak!'); }
+  } else { streak = 0; }
+  document.getElementById('streak-count').textContent = streak;
+}
+
+function showAchievement(icon, title, desc) {
+  const toast = document.getElementById('achievement-toast');
+  document.getElementById('achievement-icon').textContent = icon;
+  document.getElementById('achievement-title').textContent = title;
+  document.getElementById('achievement-desc').textContent = desc;
+  toast.classList.remove('hidden'); toast.classList.add('flex');
+  confetti({ particleCount: 40, spread: 60, origin: { y: 0.2 }, colors: ['#fbbf24', '#a78bfa'] });
+  setTimeout(() => { toast.classList.add('hidden'); toast.classList.remove('flex'); }, 3500);
+}
+
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+function showStreakInfo() {
+  if (bestStreak > 0) showAchievement('🔥', `Best Streak: ${bestStreak}`, `Current: ${streak}`);
+}
+
+// ============================================
+// MODE SWITCHING
+// ============================================
+
+function switchMode(mode) {
+  document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+  document.getElementById(`view-${mode}`).classList.remove('hidden');
+
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.className = 'mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 bg-white/5 border-2 border-white/10 text-gray-400 hover:border-white/30';
+  });
+  const colors = {
+    study: 'bg-amber-500/20 border-amber-500 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.2)]',
+    flashcards: 'bg-sky-500/20 border-sky-500 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]',
+    quiz: 'bg-yellow-500/20 border-yellow-500 text-yellow-300 shadow-[0_0_15px_rgba(234,179,8,0.2)]',
+    matching: 'bg-red-500/20 border-red-500 text-red-300 shadow-[0_0_15px_rgba(239,68,68,0.2)]',
+    essay: 'bg-indigo-500/20 border-indigo-500 text-indigo-300 shadow-[0_0_15px_rgba(99,102,241,0.2)]'
+  };
+  document.getElementById(`mode-${mode}`).className = `mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 ${colors[mode]} border-2`;
+
+  if (mode === 'flashcards') renderFlashcard();
+  if (mode === 'quiz') renderQuiz();
+  if (mode === 'matching') initMatching();
+  if (mode === 'essay') renderEssay();
+  scrollToTop();
+}
+
+// ============================================
+// STUDY MODE
+// ============================================
+
+function toggleTopic(btn) {
+  const card = btn.closest('.study-card');
+  const content = card.querySelector('.topic-content');
+  const arrow = card.querySelector('.topic-arrow');
+  const check = card.querySelector('.topic-check');
+  const topicKey = card.dataset.topic;
+  const isOpen = !content.classList.contains('hidden');
+
+  if (isOpen) {
+    content.classList.add('hidden');
+    arrow.style.transform = 'rotate(0deg)';
+    if (!topicsChecked.has(topicKey)) {
+      topicsChecked.add(topicKey);
+      check.dataset.checked = 'true';
+      check.querySelector('.check-icon').classList.remove('hidden');
+      check.querySelector('.uncheck-icon').classList.add('hidden');
+      check.classList.add('bg-green-500/30', 'border-green-500/50');
+      check.classList.remove('bg-amber-500/20', 'border-amber-500/40', 'bg-purple-500/20', 'border-purple-500/40');
+      addXP(10);
+      updateStudyProgress();
+    }
+  } else {
+    content.classList.remove('hidden');
+    arrow.style.transform = 'rotate(90deg)';
+    content.style.animation = 'slide-up 0.3s ease-out';
+  }
+}
+
+function updateStudyProgress() {
+  const pct = Math.round((topicsChecked.size / totalTopics) * 100);
+  document.getElementById('study-progress-pct').textContent = `${pct}%`;
+  document.getElementById('study-progress-bar').style.width = `${pct}%`;
+  if (pct === 100 && !achievements.has('allTopics')) {
+    achievements.add('allTopics');
+    showAchievement('💎', 'Master Miner!', 'You reviewed all study topics! The dwarfs are proud!');
+    confetti({ particleCount: 200, spread: 120, origin: { y: 0.5 } });
+  }
+}
+
+// ============================================
+// FLASHCARDS
+// ============================================
+
+function renderFlashcard() {
+  if (fcOrder.length === 0) return;
+  const data = flashcardData[fcOrder[fcIndex]];
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('fc-front').textContent = data.q;
+  document.getElementById('fc-back').textContent = data.a;
+  document.getElementById('fc-category').textContent = data.category;
+  document.getElementById('fc-progress').textContent = `${fcIndex + 1} / ${fcOrder.length}`;
+  document.getElementById('fc-known').textContent = `${fcKnown.size} known`;
+}
+
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { fcIndex = (fcIndex + 1) % fcOrder.length; renderFlashcard(); }
+function prevCard() { fcIndex = (fcIndex - 1 + fcOrder.length) % fcOrder.length; renderFlashcard(); }
+
+function markKnown() {
+  const realIdx = fcOrder[fcIndex];
+  if (!fcKnown.has(realIdx)) { fcKnown.add(realIdx); addXP(5); updateStreak(true); }
+  fcOrder.splice(fcIndex, 1);
+  if (fcOrder.length === 0) {
+    showAchievement('🃏', 'Cloudy is Proud!', 'You mastered all the flashcards!');
+    fcOrder = [...Array(flashcardData.length).keys()]; fcKnown.clear(); fcIndex = 0;
+  } else { fcIndex = fcIndex % fcOrder.length; }
+  renderFlashcard();
+}
+
+function shuffleCards() {
+  fcOrder.sort(() => Math.random() - 0.5); fcIndex = 0; renderFlashcard();
+  const c = document.getElementById('flashcard'); c.style.animation = 'none'; c.offsetHeight; c.style.animation = 'wiggle 0.4s ease';
+}
+
+document.addEventListener('keydown', (e) => {
+  if (document.getElementById('view-flashcards').classList.contains('hidden')) return;
+  if (e.key === 'ArrowRight') nextCard();
+  if (e.key === 'ArrowLeft') prevCard();
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+});
+
+// ============================================
+// QUIZ
+// ============================================
+
+function renderQuiz() {
+  if (quizAnswered.size >= quizOrder.length) { renderQuizResults(); return; }
+  const idx = quizOrder[quizIndex];
+  const data = quizData[idx];
+  const container = document.getElementById('quiz-container');
+  document.getElementById('quiz-results').classList.add('hidden');
+  container.classList.remove('hidden');
+  document.getElementById('quiz-progress').textContent = `Question ${quizAnswered.size + 1} / ${quizOrder.length}`;
+  document.getElementById('quiz-score').textContent = `${quizCorrect} correct`;
+
+  const optionsHtml = data.options.map((opt, i) => `
+    <button onclick="answerQuiz(${i}, ${data.correct})" class="quiz-option w-full text-left p-4 rounded-xl glass border-2 border-white/10 hover:border-amber-500/40 transition-all text-sm sm:text-base text-gray-200 flex items-start gap-3 group" data-idx="${i}">
+      <span class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-xs font-bold text-gray-400 flex-shrink-0 group-hover:bg-amber-500/20 group-hover:text-amber-300 transition">${['A','B','C','D'][i]}</span>
+      <span class="pt-1">${opt}</span>
+    </button>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="animate-slide-up">
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border border-amber-500/10">
+        <p class="font-display font-bold text-lg sm:text-xl text-white mb-6 leading-snug">${data.q}</p>
+        <div class="space-y-3" id="quiz-options">${optionsHtml}</div>
+        <div id="quiz-feedback" class="hidden mt-6"></div>
+      </div>
+    </div>`;
+}
+
+function answerQuiz(selected, correct) {
+  if (quizAnswered.has(quizOrder[quizIndex])) return;
+  quizAnswered.add(quizOrder[quizIndex]);
+  const buttons = document.querySelectorAll('.quiz-option');
+  const isCorrect = selected === correct;
+
+  buttons.forEach((btn, i) => {
+    btn.style.pointerEvents = 'none';
+    if (i === correct) { btn.classList.remove('border-white/10'); btn.classList.add('border-green-500', 'bg-green-500/10'); }
+    if (i === selected && !isCorrect) { btn.classList.remove('border-white/10'); btn.classList.add('border-red-500', 'bg-red-500/10', 'animate-shake'); }
+  });
+
+  const feedback = document.getElementById('quiz-feedback');
+  feedback.classList.remove('hidden');
+  if (isCorrect) {
+    quizCorrect++; addXP(15); updateStreak(true);
+    feedback.innerHTML = `<div class="flex items-center gap-3 bg-green-500/10 border border-green-500/20 rounded-xl p-4"><span class="text-2xl">💎</span><div><p class="text-green-300 font-bold text-sm">Correct! Speedy is impressed! +15 XP</p><p class="text-gray-400 text-xs mt-0.5">Streak: ${streak} 🔥</p></div></div>`;
+    confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 }, colors: ['#fbbf24', '#f97316', '#34d399'] });
+  } else {
+    updateStreak(false);
+    feedback.innerHTML = `<div class="flex items-center gap-3 bg-red-500/10 border border-red-500/20 rounded-xl p-4"><span class="text-2xl">🤨</span><div><p class="text-red-300 font-bold text-sm">Not quite!</p><p class="text-gray-400 text-xs mt-0.5">Ralfie says: "Check the green answer &amp; try again!" 💪</p></div></div>`;
+  }
+  feedback.innerHTML += `<button onclick="nextQuizQuestion()" class="mt-4 px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-sm hover:opacity-90 transition inline-flex items-center gap-2">${quizAnswered.size >= quizOrder.length ? '💎 See Results' : '→ Next Question'}</button>`;
+  document.getElementById('quiz-score').textContent = `${quizCorrect} correct`;
+}
+
+function nextQuizQuestion() {
+  if (quizAnswered.size >= quizOrder.length) { renderQuizResults(); return; }
+  quizIndex = (quizIndex + 1) % quizOrder.length;
+  while (quizAnswered.has(quizOrder[quizIndex])) quizIndex = (quizIndex + 1) % quizOrder.length;
+  renderQuiz();
+}
+
+function renderQuizResults() {
+  document.getElementById('quiz-container').classList.add('hidden');
+  const results = document.getElementById('quiz-results');
+  results.classList.remove('hidden');
+  const pct = Math.round((quizCorrect / quizOrder.length) * 100);
+  let grade, emoji, color;
+  if (pct >= 90) { grade = 'A+'; emoji = '🏆'; color = 'text-amber-400'; }
+  else if (pct >= 80) { grade = 'A'; emoji = '🌟'; color = 'text-green-400'; }
+  else if (pct >= 70) { grade = 'B'; emoji = '👍'; color = 'text-blue-400'; }
+  else if (pct >= 60) { grade = 'C'; emoji = '📚'; color = 'text-purple-400'; }
+  else { grade = 'Keep Studying!'; emoji = '💪'; color = 'text-pink-400'; }
+  if (pct === 100 && !achievements.has('perfect')) { achievements.add('perfect'); showAchievement('�', 'Perfect Score!', 'All 7 Zwerge bow to your knowledge!'); }
+  confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+  results.innerHTML = `<div class="glass-strong rounded-2xl p-8 text-center animate-pop border border-amber-500/10"><span class="text-6xl">${emoji}</span><h3 class="font-display font-bold text-3xl ${color} mt-4">${grade}</h3><p class="text-gray-300 text-lg mt-2">${quizCorrect} / ${quizOrder.length} correct (${pct}%)</p><p class="text-gray-500 text-sm mt-1">Best streak: ${bestStreak} 🔥</p><button onclick="resetQuiz()" class="mt-6 px-8 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold hover:opacity-90 transition inline-flex items-center gap-2">⛏️ Mine Again</button></div>`;
+}
+
+function resetQuiz() {
+  quizIndex = 0; quizCorrect = 0; quizAnswered.clear();
+  quizOrder.sort(() => Math.random() - 0.5); streak = 0;
+  document.getElementById('streak-count').textContent = '0'; renderQuiz();
+}
+
+// ============================================
+// MATCHING GAME
+// ============================================
+
+function initMatching() {
+  matchedPairs = new Set(); matchSelected = null; matchStartTime = Date.now();
+  if (matchTimerInterval) clearInterval(matchTimerInterval);
+  matchTimerInterval = setInterval(updateMatchTimer, 1000);
+  const container = document.getElementById('matching-container');
+  const terms = matchingPairs.map((p, i) => ({ text: p.term, idx: i })).sort(() => Math.random() - 0.5);
+  const defs = matchingPairs.map((p, i) => ({ text: p.def, idx: i })).sort(() => Math.random() - 0.5);
+
+  container.innerHTML = `
+    <div class="space-y-3">
+      <h3 class="text-blue-400 font-display font-bold text-sm uppercase tracking-wider mb-2">📝 Terms</h3>
+      ${terms.map(t => `<button onclick="selectMatch(this,'term',${t.idx})" class="match-item w-full text-left p-4 rounded-xl glass border-2 border-white/10 hover:border-blue-500/40 transition-all text-sm" data-type="term" data-idx="${t.idx}"><span class="text-blue-300 font-bold">${t.text}</span></button>`).join('')}
+    </div>
+    <div class="space-y-3">
+      <h3 class="text-pink-400 font-display font-bold text-sm uppercase tracking-wider mb-2">💡 Definitions</h3>
+      ${defs.map(d => `<button onclick="selectMatch(this,'def',${d.idx})" class="match-item w-full text-left p-4 rounded-xl glass border-2 border-white/10 hover:border-pink-500/40 transition-all text-sm text-gray-300" data-type="def" data-idx="${d.idx}">${d.text}</button>`).join('')}
+    </div>`;
+  updateMatchScore();
+}
+
+function selectMatch(el, type, idx) {
+  if (el.dataset.matched) return;
+  if (matchSelected && matchSelected.type === type) {
+    matchSelected.el.classList.remove('border-amber-400', 'bg-amber-500/10', 'ring-2', 'ring-amber-400/30');
+    matchSelected.el.classList.add('border-white/10');
+  }
+  if (!matchSelected || matchSelected.type === type) {
+    if (matchSelected && matchSelected.type !== type) {} else {
+      matchSelected = { el, type, idx };
+      el.classList.remove('border-white/10'); el.classList.add('border-amber-400', 'bg-amber-500/10', 'ring-2', 'ring-amber-400/30');
+      return;
+    }
+  }
+  // Check match
+  if (matchSelected.idx === idx) {
+    matchedPairs.add(idx);
+    [matchSelected.el, el].forEach(e => {
+      e.classList.remove('border-white/10', 'border-amber-400', 'bg-amber-500/10', 'ring-2', 'ring-amber-400/30');
+      e.classList.add('border-green-500/40', 'bg-green-500/10', 'opacity-60');
+      e.style.pointerEvents = 'none'; e.dataset.matched = 'true';
+    });
+    addXP(10); updateStreak(true);
+    confetti({ particleCount: 20, spread: 40, origin: { y: 0.7 }, colors: ['#34d399'] });
+    if (matchedPairs.size === matchingPairs.length) {
+      clearInterval(matchTimerInterval);
+      const elapsed = Math.round((Date.now() - matchStartTime) / 1000);
+      showAchievement('🧩', 'Bubi Cheers!', `All matched in ${elapsed}s! The mine is clear!`);
+      confetti({ particleCount: 150, spread: 100 });
+    }
+  } else {
+    updateStreak(false);
+    [matchSelected.el, el].forEach(e => {
+      e.classList.add('animate-shake', 'border-red-500', 'bg-red-500/10');
+      setTimeout(() => {
+        e.classList.remove('animate-shake', 'border-red-500', 'bg-red-500/10', 'border-amber-400', 'bg-amber-500/10', 'ring-2', 'ring-amber-400/30');
+        e.classList.add('border-white/10');
+      }, 500);
+    });
+  }
+  matchSelected = null; updateMatchScore();
+}
+
+function updateMatchScore() { document.getElementById('match-score').textContent = `${matchedPairs.size} / ${matchingPairs.length} matched`; }
+
+function updateMatchTimer() {
+  if (!matchStartTime) return;
+  const s = Math.round((Date.now() - matchStartTime) / 1000);
+  document.getElementById('match-timer').textContent = `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
+}
+
+// ============================================
+// ESSAY PREP
+// ============================================
+
+function renderEssay() {
+  document.getElementById('essay-container').innerHTML = essayQuestions.map((eq, i) => `
+    <div class="glass rounded-2xl overflow-hidden transition-all">
+      <button onclick="toggleEssay(this)" class="w-full p-5 flex items-start gap-3 sm:gap-4 text-left group">
+        <span class="tag ${eq.section.includes('Dwarf') ? 'bg-amber-500/20 text-amber-300 border border-amber-500/20' : 'bg-purple-500/20 text-purple-300 border border-purple-500/20'} flex-shrink-0 text-[11px]">${eq.section}</span>
+        <p class="font-display font-bold text-white group-hover:text-purple-300 transition-colors text-sm sm:text-base flex-1">${eq.q}</p>
+        <span class="text-gray-600 text-xl transition-transform essay-arrow flex-shrink-0">›</span>
+      </button>
+      <div class="essay-content hidden px-5 pb-5">
+        <div class="sm:ml-16">
+          <p class="text-gray-400 text-xs uppercase tracking-wider font-bold mb-3">💡 Outline Hints:</p>
+          <div class="space-y-2 mb-4">
+            ${eq.hints.map(h => `<div class="bg-white/5 rounded-lg p-3 text-gray-300 text-sm border-l-4 border-purple-500/30 flex gap-2"><span class="text-purple-400">→</span> ${h}</div>`).join('')}
+          </div>
+          <textarea placeholder="Draft your answer here... (auto-saved)" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-gray-200 text-sm resize-y min-h-[120px] focus:outline-none focus:border-purple-500/40 transition placeholder:text-gray-600" oninput="localStorage.setItem('essay-${i}',this.value)">${localStorage.getItem('essay-'+i) || ''}</textarea>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleEssay(btn) {
+  const c = btn.nextElementSibling, a = btn.querySelector('.essay-arrow');
+  if (!c.classList.contains('hidden')) { c.classList.add('hidden'); a.style.transform = 'rotate(0deg)'; }
+  else { c.classList.remove('hidden'); a.style.transform = 'rotate(90deg)'; c.style.animation = 'slide-up 0.3s ease-out'; }
+}
+
+// ============================================
+// POMODORO TIMER
+// ============================================
+
+function toggleTimer() {
+  const m = document.getElementById('timer-modal'); m.classList.toggle('hidden'); m.classList.toggle('flex');
+}
+function setTimer(min) {
+  timerMinutes = min; timerTotalSeconds = min * 60; timerSeconds = 0; timerRunning = false;
+  if (timerInterval) clearInterval(timerInterval); updateTimerDisplay();
+}
+function startTimer() {
+  if (timerRunning) return; timerRunning = true;
+  let remaining = timerMinutes * 60 + timerSeconds;
+  timerInterval = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(timerInterval); timerRunning = false; timerMinutes = 0; timerSeconds = 0; updateTimerDisplay();
+      showAchievement('⛏️', 'Mining Session Complete!', 'Cookie says: time for a snack break!'); addXP(25);
+      confetti({ particleCount: 80, spread: 70, colors: ['#fbbf24', '#f97316', '#ef4444'] }); return;
+    }
+    timerMinutes = Math.floor(remaining / 60); timerSeconds = remaining % 60; updateTimerDisplay();
+  }, 1000);
+}
+function pauseTimer() { timerRunning = false; if (timerInterval) clearInterval(timerInterval); }
+function updateTimerDisplay() {
+  const str = `${timerMinutes.toString().padStart(2,'0')}:${timerSeconds.toString().padStart(2,'0')}`;
+  document.getElementById('timer-display').textContent = str;
+  document.getElementById('timer-big').textContent = str;
+  const remaining = timerMinutes * 60 + timerSeconds;
+  document.getElementById('timer-circle').style.strokeDashoffset = 283 * (1 - remaining / timerTotalSeconds);
+}
+
+// ============================================
+// BACKGROUND PARTICLES (subtle, calming)
+// ============================================
+
+(function initParticles() {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  for (let i = 0; i < 40; i++) {
+    particles.push({
+      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+      r: Math.random() * 2 + 0.5, dx: (Math.random() - 0.5) * 0.3, dy: (Math.random() - 0.5) * 0.3,
+      color: ['rgba(251,191,36,0.3)', 'rgba(249,115,22,0.3)', 'rgba(239,68,68,0.2)', 'rgba(139,92,246,0.2)', 'rgba(56,189,248,0.2)'][Math.floor(Math.random() * 5)]
+    });
+  }
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.dx; p.y += p.dy;
+      if (p.x < 0) p.x = canvas.width; if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height; if (p.y > canvas.height) p.y = 0;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color; ctx.fill();
+    });
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dist = Math.hypot(particles[i].x - particles[j].x, particles[i].y - particles[j].y);
+        if (dist < 120) {
+          ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(251,191,36,${0.08 * (1 - dist / 120)})`; ctx.stroke();
         }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
 
-        // --- TYPEWRITER EFFECT ---
-        function typewriterEffect(text, targetElement) {
-          if (!targetElement) return;
-          
-          // Split text into words
-          const words = text.split(' ');
-          targetElement.innerHTML = '';
-          
-          // Create spans for each word
-          words.forEach((word, index) => {
-            const wordSpan = document.createElement('span');
-            wordSpan.className = 'word-fade-in';
-            wordSpan.textContent = word;
-            wordSpan.style.animationDelay = `${index * 50}ms`;
-            
-            targetElement.appendChild(wordSpan);
-            
-            // Add space after each word (except the last one)
-            if (index < words.length - 1) {
-              targetElement.appendChild(document.createTextNode(' '));
-            }
-          });
-          
-          // Calculate total animation time and show next button after
-          const totalTime = words.length * 50 + 300; // 50ms per word + 300ms for last word animation
-          setTimeout(() => {
-            const nextBtnContainer = document.getElementById('next-btn-container');
-            if (nextBtnContainer) {
-              nextBtnContainer.style.opacity = '1';
-            }
-          }, totalTime);
+// ============================================
+// STATE PERSISTENCE
+// ============================================
+
+function loadState() {
+  const saved = localStorage.getItem('mod6-state');
+  if (saved) {
+    try {
+      const s = JSON.parse(saved);
+      xp = s.xp || 0; level = s.level || 1; bestStreak = s.bestStreak || 0;
+      topicsChecked = new Set(s.topicsChecked || []); achievements = new Set(s.achievements || []);
+      document.getElementById('xp-display').textContent = `${xp} XP`;
+      document.getElementById('level-display').textContent = `Lv ${level}`;
+      document.getElementById('xp-bar').style.width = `${(xp / (level * 100)) * 100}%`;
+      topicsChecked.forEach(key => {
+        const card = document.querySelector(`[data-topic="${key}"]`);
+        if (card) {
+          const check = card.querySelector('.topic-check');
+          check.dataset.checked = 'true';
+          check.querySelector('.check-icon').classList.remove('hidden');
+          check.querySelector('.uncheck-icon').classList.add('hidden');
+          check.classList.add('bg-green-500/30', 'border-green-500/50');
+          check.classList.remove('bg-amber-500/20', 'border-amber-500/40', 'bg-purple-500/20', 'border-purple-500/40');
         }
+      });
+      updateStudyProgress();
+    } catch(e) {}
+  }
+}
 
-        // --- HANDLERS ---
-        function handleReveal() {
-          if (isRevealed) return;
-          isRevealed = true;
-          
-          // Play magical chime sound
-          playSound('gemstoneClick');
-          
-          const data = presentationData[currentSlideIndex];
-          const theme = themeColors[data.theme] || themeColors.amber;
-          const colors = ['#fbbf24', '#f59e0b', '#d97706', '#ffffff']; 
-          
-          confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: colors,
-            zIndex: 100,
-            shapes: ['star', 'circle']
-          });
+function saveState() {
+  localStorage.setItem('mod6-state', JSON.stringify({
+    xp, level, bestStreak, topicsChecked: [...topicsChecked], achievements: [...achievements]
+  }));
+}
 
-          const gemBtn = document.getElementById('gemstone-container');
-          const ansContainer = document.getElementById('answer-container');
-          
-          if (gemBtn) gemBtn.classList.replace('flex', 'hidden');
-          if (ansContainer) {
-            ansContainer.classList.replace('hidden', 'flex');
-            
-            // Start typewriter effect for answer text
-            const answerText = document.getElementById('answer-text');
-            if (answerText) {
-              const answer = answerText.getAttribute('data-answer');
-              typewriterEffect(answer, answerText);
-            }
-          }
-        }
+setInterval(saveState, 5000);
+window.addEventListener('beforeunload', saveState);
+loadState();
 
-        function handleNext() {
-          if (currentSlideIndex < presentationData.length - 1) {
-            currentSlideIndex++;
-            isRevealed = false;
-            renderSlide();
-          } else {
-            isComplete = true;
-            renderSlide();
-          }
-        }
-
-        function handleRestart() {
-          isComplete = false;
-          currentSlideIndex = 0;
-          isRevealed = false;
-          renderSlide();
-        }
-
-        // --- INIT ---
-        initApp();
-
-        // --- 3D TILT EFFECT ---
-        function init3DTiltEffect() {
-          document.addEventListener('mousemove', (e) => {
-            const slideContainer = document.getElementById('slide-container');
-            if (!slideContainer) return;
-
-            // Get window dimensions
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-
-            // Calculate mouse position relative to center (-1 to 1)
-            const mouseX = (e.clientX / windowWidth) - 0.5;
-            const mouseY = (e.clientY / windowHeight) - 0.5;
-
-            // Calculate rotation angles (multiply by max rotation degrees)
-            const maxRotation = 8; // Maximum rotation in degrees
-            const rotateY = mouseX * maxRotation; // Horizontal mouse movement affects Y rotation
-            const rotateX = -mouseY * maxRotation; // Vertical mouse movement affects X rotation (inverted)
-
-            // Apply 3D transform with perspective
-            slideContainer.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            slideContainer.style.transition = 'transform 0.1s ease-out';
-          });
-
-          // Reset tilt when mouse leaves the window
-          document.addEventListener('mouseleave', () => {
-            const slideContainer = document.getElementById('slide-container');
-            if (!slideContainer) return;
-            
-            slideContainer.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
-            slideContainer.style.transition = 'transform 0.5s ease-out';
-          });
-        }
-
-        // Initialize 3D tilt effect
-        init3DTiltEffect();
-    </script>
-
-    <!-- 8. Sparkling Mouse Trail Effect -->
-    <script>
-        function createSparkleTrail() {
-            // Create canvas overlay
-            const canvas = document.createElement('canvas');
-            canvas.style.position = 'fixed';
-            canvas.style.top = '0';
-            canvas.style.left = '0';
-            canvas.style.pointerEvents = 'none';
-            canvas.style.zIndex = '9999';
-            document.body.appendChild(canvas);
-
-            const ctx = canvas.getContext('2d');
-            const particles = [];
-
-            // Resize canvas to match window
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            // Particle class
-            class Particle {
-                constructor(x, y) {
-                    this.x = x;
-                    this.y = y;
-                    this.size = Math.random() * 3 + 2; // 2-5px
-                    this.speedX = (Math.random() - 0.5) * 2;
-                    this.speedY = (Math.random() - 0.5) * 2;
-                    this.life = 1.0; // full opacity
-                    this.decay = Math.random() * 0.02 + 0.01; // fade speed
-                    
-                    // Gold color variations
-                    const goldShades = [
-                        { r: 255, g: 215, b: 0 },   // Gold
-                        { r: 255, g: 223, b: 0 },   // Golden yellow
-                        { r: 255, g: 200, b: 50 },  // Rich gold
-                        { r: 255, g: 230, b: 100 }, // Light gold
-                    ];
-                    this.color = goldShades[Math.floor(Math.random() * goldShades.length)];
-                }
-
-                update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                    this.life -= this.decay;
-                    this.size = Math.max(0, this.size - 0.05); // shrink over time
-                }
-
-                draw() {
-                    ctx.save();
-                    ctx.globalAlpha = this.life;
-                    
-                    // Create glowing effect with gradient
-                    const gradient = ctx.createRadialGradient(
-                        this.x, this.y, 0,
-                        this.x, this.y, this.size
-                    );
-                    gradient.addColorStop(0, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`);
-                    gradient.addColorStop(0.5, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0.5)`);
-                    gradient.addColorStop(1, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0)`);
-                    
-                    ctx.fillStyle = gradient;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Add sparkle effect - draw a bright center
-                    if (this.life > 0.5) {
-                        ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
-                        ctx.beginPath();
-                        ctx.arc(this.x, this.y, this.size * 0.3, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    
-                    ctx.restore();
-                }
-            }
-
-            // Mouse move handler
-            let lastX = 0, lastY = 0;
-            document.addEventListener('mousemove', (e) => {
-                const distance = Math.hypot(e.clientX - lastX, e.clientY - lastY);
-                const particleCount = Math.min(Math.floor(distance / 10), 3);
-                
-                for (let i = 0; i < particleCount; i++) {
-                    particles.push(new Particle(e.clientX, e.clientY));
-                }
-                
-                lastX = e.clientX;
-                lastY = e.clientY;
-            });
-
-            // Animation loop
-            function animate() {
-                // Clear canvas with fade effect for trails
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                // Update and draw particles
-                for (let i = particles.length - 1; i >= 0; i--) {
-                    particles[i].update();
-                    particles[i].draw();
-
-                    // Remove dead particles
-                    if (particles[i].life <= 0) {
-                        particles.splice(i, 1);
-                    }
-                }
-
-                requestAnimationFrame(animate);
-            }
-
-            animate();
-        }
-
-        // Initialize sparkle trail
-        createSparkleTrail();
-    </script>
+if (!localStorage.getItem('mod6-welcomed')) {
+  localStorage.setItem('mod6-welcomed', 'true');
+  setTimeout(() => showAchievement('⛏️', 'Welcome to the Mine!', 'The 7 Zwerge are ready to help you study!'), 800);
+}
+</script>
 </body>
 </html>
