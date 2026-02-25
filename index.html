@@ -381,6 +381,9 @@
     <button onclick="switchMode('cheatsheet')" id="mode-cheatsheet" class="mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 bg-white/5 border-2 border-white/10 text-gray-400 hover:border-white/30">
       📝 Cheat Sheet <span class="hidden sm:inline text-[10px] opacity-60">PRINT ME</span>
     </button>
+    <button onclick="switchMode('blastgames')" id="mode-blastgames" class="mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 bg-white/5 border-2 border-white/10 text-gray-400 hover:border-white/30">
+      🎮 Blast Games <span class="hidden sm:inline text-[10px] opacity-60">FUN!</span>
+    </button>
   </div>
 
   <!-- ======== STUDY MODE ======== -->
@@ -1613,6 +1616,47 @@
     </div>
   </div>
 
+  <!-- ======== BLAST GAMES MODE ======== -->
+  <div id="view-blastgames" class="view hidden">
+    <div class="text-center mb-6">
+      <div class="flex justify-center mb-3"><div class="dwarf-avatar bg-fuchsia-500/80 text-white animate-float">🎮</div></div>
+      <h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">🎮 Blast Games — ADHD-Friendly Mini Games!</h2>
+      <p class="text-gray-400 text-sm sm:text-base">Bite-sized, dopamine-boosting games to lock in your exam knowledge. Pick a game!</p>
+    </div>
+
+    <!-- Game Selector -->
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6 max-w-4xl mx-auto" id="blast-game-selector">
+      <button onclick="startBlastGame('speedround')" class="blast-pick glass-strong rounded-2xl p-4 border-2 border-fuchsia-500/20 hover:border-fuchsia-500/50 transition-all text-center group">
+        <span class="text-3xl block mb-2 group-hover:animate-wiggle">⚡</span>
+        <span class="font-display font-bold text-fuchsia-300 text-sm">Speed Round</span>
+        <span class="block text-gray-500 text-[10px] mt-1">60s True/False Blitz</span>
+      </button>
+      <button onclick="startBlastGame('bombdefuse')" class="blast-pick glass-strong rounded-2xl p-4 border-2 border-orange-500/20 hover:border-orange-500/50 transition-all text-center group">
+        <span class="text-3xl block mb-2 group-hover:animate-wiggle">💣</span>
+        <span class="font-display font-bold text-orange-300 text-sm">Bomb Defuser</span>
+        <span class="block text-gray-500 text-[10px] mt-1">Type Fast or Boom!</span>
+      </button>
+      <button onclick="startBlastGame('timeline')" class="blast-pick glass-strong rounded-2xl p-4 border-2 border-sky-500/20 hover:border-sky-500/50 transition-all text-center group">
+        <span class="text-3xl block mb-2 group-hover:animate-wiggle">🔗</span>
+        <span class="font-display font-bold text-sky-300 text-sm">Timeline</span>
+        <span class="block text-gray-500 text-[10px] mt-1">Put Events in Order</span>
+      </button>
+      <button onclick="startBlastGame('whoami')" class="blast-pick glass-strong rounded-2xl p-4 border-2 border-green-500/20 hover:border-green-500/50 transition-all text-center group">
+        <span class="text-3xl block mb-2 group-hover:animate-wiggle">🕵️</span>
+        <span class="font-display font-bold text-green-300 text-sm">Who Am I?</span>
+        <span class="block text-gray-500 text-[10px] mt-1">Guess from Clues</span>
+      </button>
+      <button onclick="startBlastGame('categorysort')" class="blast-pick glass-strong rounded-2xl p-4 border-2 border-amber-500/20 hover:border-amber-500/50 transition-all text-center group col-span-2 sm:col-span-1">
+        <span class="text-3xl block mb-2 group-hover:animate-wiggle">🗂️</span>
+        <span class="font-display font-bold text-amber-300 text-sm">Category Sort</span>
+        <span class="block text-gray-500 text-[10px] mt-1">Sort into Categories</span>
+      </button>
+    </div>
+
+    <!-- Game Arena -->
+    <div id="blast-arena" class="max-w-3xl mx-auto"></div>
+  </div>
+
 </main>
 
 <!-- Back to Top Button -->
@@ -1844,7 +1888,8 @@ function switchMode(mode) {
     matching: 'bg-red-500/20 border-red-500 text-red-300 shadow-[0_0_15px_rgba(239,68,68,0.2)]',
     essay: 'bg-indigo-500/20 border-indigo-500 text-indigo-300 shadow-[0_0_15px_rgba(99,102,241,0.2)]',
     notes: 'bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)]',
-    cheatsheet: 'bg-rose-500/20 border-rose-500 text-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.2)]'
+    cheatsheet: 'bg-rose-500/20 border-rose-500 text-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.2)]',
+    blastgames: 'bg-fuchsia-500/20 border-fuchsia-500 text-fuchsia-300 shadow-[0_0_15px_rgba(217,70,239,0.2)]'
   };
   document.getElementById(`mode-${mode}`).className = `mode-btn px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all flex items-center gap-2 ${colors[mode]} border-2`;
 
@@ -2326,6 +2371,522 @@ loadState();
 if (!localStorage.getItem('mod6-welcomed')) {
   localStorage.setItem('mod6-welcomed', 'true');
   setTimeout(() => showAchievement('⛏️', 'Welcome to the Mine!', 'The 7 Zwerge are ready to help you study!'), 800);
+}
+
+// ============================================
+// 🎮 BLAST GAMES
+// ============================================
+
+let blastTimerInterval = null;
+
+function startBlastGame(game) {
+  if (blastTimerInterval) { clearInterval(blastTimerInterval); blastTimerInterval = null; }
+  const arena = document.getElementById('blast-arena');
+  if (game === 'speedround') initSpeedRound(arena);
+  else if (game === 'bombdefuse') initBombDefuse(arena);
+  else if (game === 'timeline') initTimeline(arena);
+  else if (game === 'whoami') initWhoAmI(arena);
+  else if (game === 'categorysort') initCategorySort(arena);
+  arena.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── ⚡ SPEED ROUND: 60s True/False Blitz ───
+const speedRoundData = [
+  { s: "Stringham traces dwarfs from medieval epics to Grimm fairy tales.", a: true },
+  { s: "Dwarfs in German literature are always portrayed as evil.", a: false },
+  { s: "Reciprocity is central to dwarf-human interactions.", a: true },
+  { s: "The Nibelungenlied features a dwarf named Alberich.", a: true },
+  { s: "Rumpelstiltskin is an example of an Unexpected Helper.", a: false },
+  { s: "Grimm fairy tales were originally intended for children.", a: false },
+  { s: "7 Zwerge (2004) is a parody of Snow White.", a: true },
+  { s: "Schema theory says all readers interpret texts the same way.", a: false },
+  { s: "FSK stands for Freiwillige Selbstkontrolle der Filmwirtschaft.", a: true },
+  { s: "The dwarfs in Snow White provide shelter expecting nothing in return.", a: false },
+  { s: "Das Blaue Licht features an Obedient Dwarf.", a: true },
+  { s: "Heroism in 7 Zwerge is individual and virtuous.", a: false },
+  { s: "The Brothers Grimm were passive collectors, not active editors.", a: false },
+  { s: "Culture influences inference-making at a deep cognitive level.", a: true },
+  { s: "Dwarfs are frequently associated with mountains and mining.", a: true },
+  { s: "The Elves and the Shoemaker is an example of the Demonic Dwarf.", a: false },
+  { s: "Western readers tend toward individualistic interpretations.", a: true },
+  { s: "Grimm fairy tales were used for German cultural preservation.", a: true },
+  { s: "7 Zwerge's humor translates easily to all cultures.", a: false },
+  { s: "Rudlieb is one of the earliest German dwarf narratives.", a: true },
+  { s: "Gilmour identifies exactly 3 categories of dwarfs.", a: false },
+  { s: "The Tarnkappe is a cloak of invisibility from the Nibelungenlied.", a: true },
+  { s: "Dwarfs shift roles: helper, servant, prophet, villain.", a: true },
+  { s: "Disney's adaptations preserve the dark original Grimm stories perfectly.", a: false },
+  { s: "Mystery and limited knowledge preserve the enchantment of dwarf figures.", a: true },
+  { s: "The Volunteer Giver helps but expects fair exchange in return.", a: true },
+  { s: "Situation Model means a physical diorama of a story.", a: false },
+  { s: "7 Zwerge stars the 7 most famous German comedians.", a: true },
+  { s: "Top-down processing means reading word by word without context.", a: false },
+  { s: "The Grimm fairy tales originally came from laborer women who worked in kitchens.", a: true },
+  { s: "Lied vom Hürnen Seyfrid involves prophetic knowledge.", a: true },
+  { s: "Snow White dwarfs reinforce social norms through structured reciprocity.", a: true },
+  { s: "Moral ambiguity is NOT a theme in the Stringham article.", a: false },
+  { s: "Eurodisney brought Americanized fairy tales back to Europe.", a: true },
+];
+
+function initSpeedRound(arena) {
+  const shuffled = [...speedRoundData].sort(() => Math.random() - 0.5);
+  let idx = 0, score = 0, timeLeft = 60, answered = false;
+
+  function render() {
+    arena.innerHTML = `
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border-2 border-fuchsia-500/30 animate-pop">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl animate-wiggle">⚡</span>
+            <div>
+              <h3 class="font-display font-bold text-xl text-fuchsia-300">Speed Round</h3>
+              <p class="text-gray-500 text-xs">True or False — GO!</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="glass rounded-xl px-4 py-2"><span class="font-mono font-bold text-green-300 text-lg">${score}</span><span class="text-gray-500 text-xs ml-1">pts</span></div>
+            <div class="glass rounded-xl px-4 py-2"><span class="font-mono font-bold ${timeLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-amber-300'} text-lg">${timeLeft}s</span></div>
+          </div>
+        </div>
+        <div class="bg-fuchsia-500/5 rounded-2xl p-6 sm:p-8 border border-fuchsia-500/10 mb-6 min-h-[120px] flex items-center justify-center">
+          <p class="font-display font-bold text-lg sm:text-xl text-white text-center leading-relaxed">${idx < shuffled.length ? shuffled[idx].s : 'Done!'}</p>
+        </div>
+        <div id="sr-feedback" class="mb-4 min-h-[48px]"></div>
+        ${idx < shuffled.length ? `
+        <div class="flex justify-center gap-4">
+          <button onclick="srAnswer(true)" class="px-10 py-4 rounded-2xl bg-green-500/20 border-2 border-green-500/30 hover:bg-green-500/30 hover:border-green-500/50 transition-all text-green-300 font-bold text-xl flex items-center gap-3 shadow-lg shadow-green-500/10">✅ TRUE</button>
+          <button onclick="srAnswer(false)" class="px-10 py-4 rounded-2xl bg-red-500/20 border-2 border-red-500/30 hover:bg-red-500/30 hover:border-red-500/50 transition-all text-red-300 font-bold text-xl flex items-center gap-3 shadow-lg shadow-red-500/10">❌ FALSE</button>
+        </div>` : ''}
+      </div>`;
+  }
+
+  window.srAnswer = function(ans) {
+    if (answered || idx >= shuffled.length) return;
+    answered = true;
+    const correct = ans === shuffled[idx].a;
+    const fb = document.getElementById('sr-feedback');
+    if (correct) {
+      score += timeLeft <= 10 ? 3 : timeLeft <= 30 ? 2 : 1;
+      addXP(5); updateStreak(true);
+      fb.innerHTML = `<div class="text-center text-green-300 font-bold animate-pop text-lg">💎 Correct! +${timeLeft <= 10 ? 3 : timeLeft <= 30 ? 2 : 1} pts</div>`;
+    } else {
+      updateStreak(false);
+      fb.innerHTML = `<div class="text-center text-red-300 font-bold animate-shake text-lg">❌ Nope! Answer was ${shuffled[idx].a ? 'TRUE' : 'FALSE'}</div>`;
+    }
+    setTimeout(() => { idx++; answered = false; if (timeLeft > 0 && idx < shuffled.length) render(); else endGame(); }, 800);
+  };
+
+  function endGame() {
+    clearInterval(blastTimerInterval); blastTimerInterval = null;
+    const total = Math.min(idx, shuffled.length);
+    confetti({ particleCount: 80, spread: 70, colors: ['#d946ef', '#fbbf24', '#34d399'] });
+    arena.innerHTML = `
+      <div class="glass-strong rounded-2xl p-8 text-center animate-pop border-2 border-fuchsia-500/30">
+        <span class="text-5xl">⚡</span>
+        <h3 class="font-display font-bold text-2xl text-fuchsia-300 mt-4">Speed Round Complete!</h3>
+        <p class="text-white text-4xl font-mono font-bold mt-3">${score} points</p>
+        <p class="text-gray-400 text-sm mt-2">Answered ${total} questions in 60 seconds</p>
+        <button onclick="startBlastGame('speedround')" class="mt-6 px-8 py-3 rounded-2xl bg-gradient-to-r from-fuchsia-500 to-purple-500 text-white font-bold hover:opacity-90 transition">⚡ Play Again</button>
+      </div>`;
+  }
+
+  render();
+  blastTimerInterval = setInterval(() => {
+    timeLeft--;
+    const timerEl = arena.querySelector('.font-mono.font-bold.text-amber-300, .font-mono.font-bold.text-red-400');
+    if (timerEl) {
+      timerEl.textContent = `${timeLeft}s`;
+      if (timeLeft <= 10) timerEl.className = timerEl.className.replace('text-amber-300', 'text-red-400') + ' animate-pulse';
+    }
+    if (timeLeft <= 0) endGame();
+  }, 1000);
+}
+
+// ─── 💣 BOMB DEFUSER: Type the answer before time runs out ───
+const bombData = [
+  { q: "Author of the Dwarfs article? (last name)", a: ["stringham"] },
+  { q: "Dwarf who is forced into servitude in the Nibelungenlied?", a: ["alberich"] },
+  { q: "Magic cloak from the Nibelungenlied?", a: ["tarnkappe"] },
+  { q: "Category: assists without asking for anything", a: ["unexpected helper"] },
+  { q: "Category: abductor or manipulator", a: ["demonic dwarf"] },
+  { q: "Rumpelstiltskin demands the queen's ___", a: ["firstborn", "child", "firstborn child", "baby"] },
+  { q: "FSK stands for Freiwillige ___ der Filmwirtschaft", a: ["selbstkontrolle"] },
+  { q: "Cultural mental frameworks guiding interpretation", a: ["schema theory", "schema", "schemata"] },
+  { q: "The Frog Prince in German: Der ___", a: ["froschkönig", "froschkonig", "froschkoenig"] },
+  { q: "7 Zwerge is a ___ of Snow White", a: ["parody"] },
+  { q: "Using prior knowledge to interpret text = ___-down processing", a: ["top"] },
+  { q: "Mental picture of characters/events during reading", a: ["situation model"] },
+  { q: "Grimm tales were used for German ___ and cultural preservation", a: ["nationalism", "romantic nationalism"] },
+  { q: "Filling narrative gaps with cultural knowledge = ___-making", a: ["inference"] },
+  { q: "Early 11th century dwarf story about treasure & mistrust", a: ["rudlieb"] },
+];
+
+function initBombDefuse(arena) {
+  const shuffled = [...bombData].sort(() => Math.random() - 0.5).slice(0, 10);
+  let idx = 0, score = 0, bombTime = 15;
+
+  function renderBomb() {
+    if (idx >= shuffled.length) { endBombGame(); return; }
+    bombTime = 15;
+    arena.innerHTML = `
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border-2 border-orange-500/30 animate-pop">
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl ${bombTime <= 5 ? 'animate-shake' : 'animate-wiggle'}">💣</span>
+            <div>
+              <h3 class="font-display font-bold text-xl text-orange-300">Bomb Defuser</h3>
+              <p class="text-gray-500 text-xs">${idx + 1} / ${shuffled.length}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="glass rounded-xl px-4 py-2"><span class="font-mono font-bold text-green-300">${score}</span><span class="text-gray-500 text-xs ml-1">defused</span></div>
+            <div class="glass rounded-xl px-4 py-2"><span id="bomb-timer" class="font-mono font-bold text-orange-300 text-xl">${bombTime}</span></div>
+          </div>
+        </div>
+        <div class="bg-orange-500/5 rounded-2xl p-6 border border-orange-500/10 mb-5">
+          <p class="font-display font-bold text-lg sm:text-xl text-white text-center">${shuffled[idx].q}</p>
+        </div>
+        <div id="bomb-feedback" class="mb-3 min-h-[40px]"></div>
+        <div class="flex gap-3">
+          <input type="text" id="bomb-input" class="flex-1 bg-white/5 border-2 border-orange-500/30 rounded-2xl px-5 py-4 text-white text-lg font-bold focus:outline-none focus:border-orange-500 transition placeholder:text-gray-600" placeholder="Type your answer..." autofocus autocomplete="off" onkeydown="if(event.key==='Enter')checkBomb()">
+          <button onclick="checkBomb()" class="px-6 py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-lg hover:opacity-90 transition flex-shrink-0">🔧 Defuse!</button>
+        </div>
+      </div>`;
+    document.getElementById('bomb-input').focus();
+    if (blastTimerInterval) clearInterval(blastTimerInterval);
+    blastTimerInterval = setInterval(() => {
+      bombTime--;
+      const te = document.getElementById('bomb-timer');
+      if (te) { te.textContent = bombTime; if (bombTime <= 5) te.classList.add('text-red-400', 'animate-pulse'); }
+      if (bombTime <= 0) {
+        clearInterval(blastTimerInterval);
+        updateStreak(false);
+        const fb = document.getElementById('bomb-feedback');
+        if (fb) fb.innerHTML = `<div class="text-center text-red-300 font-bold animate-shake">💥 BOOM! Answer: <span class="text-white">${shuffled[idx].a[0]}</span></div>`;
+        setTimeout(() => { idx++; renderBomb(); }, 1500);
+      }
+    }, 1000);
+  }
+
+  window.checkBomb = function() {
+    const input = document.getElementById('bomb-input');
+    if (!input) return;
+    const val = input.value.trim().toLowerCase();
+    if (!val) return;
+    const correct = shuffled[idx].a.some(a => val.includes(a.toLowerCase()));
+    const fb = document.getElementById('bomb-feedback');
+    if (correct) {
+      clearInterval(blastTimerInterval);
+      score++; addXP(15); updateStreak(true);
+      fb.innerHTML = `<div class="text-center text-green-300 font-bold animate-pop text-lg">🔧 Defused! +15 XP</div>`;
+      confetti({ particleCount: 25, spread: 40, origin: { y: 0.7 }, colors: ['#f97316', '#fbbf24'] });
+      setTimeout(() => { idx++; renderBomb(); }, 900);
+    } else {
+      fb.innerHTML = `<div class="text-center text-red-300 font-bold animate-shake">❌ Try again — keep typing!</div>`;
+      input.value = ''; input.focus();
+    }
+  };
+
+  function endBombGame() {
+    clearInterval(blastTimerInterval); blastTimerInterval = null;
+    confetti({ particleCount: 100, spread: 80, colors: ['#f97316', '#fbbf24', '#ef4444'] });
+    arena.innerHTML = `
+      <div class="glass-strong rounded-2xl p-8 text-center animate-pop border-2 border-orange-500/30">
+        <span class="text-5xl">💣</span>
+        <h3 class="font-display font-bold text-2xl text-orange-300 mt-4">Mission Complete!</h3>
+        <p class="text-white text-4xl font-mono font-bold mt-3">${score} / ${shuffled.length}</p>
+        <p class="text-gray-400 text-sm mt-2">bombs defused</p>
+        <button onclick="startBlastGame('bombdefuse')" class="mt-6 px-8 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold hover:opacity-90 transition">💣 Play Again</button>
+      </div>`;
+  }
+
+  renderBomb();
+}
+
+// ─── 🔗 TIMELINE: Arrange events in chronological order ───
+const timelineEvents = [
+  { text: "Rudlieb — earliest German dwarf narrative", year: 1050 },
+  { text: "Nibelungenlied — dwarfs, treasure, Tarnkappe", year: 1200 },
+  { text: "Lied vom Hürnen Seyfrid — prophetic dwarfs", year: 1530 },
+  { text: "Brothers Grimm collect Kinder- und Hausmärchen", year: 1812 },
+  { text: "Grimm tales used for Romantic nationalism", year: 1850 },
+  { text: "Disney's Snow White film released", year: 1937 },
+  { text: "7 Zwerge parody film released in Germany", year: 2004 },
+  { text: "Eurodisney — Americanized tales return to Europe", year: 1992 },
+];
+
+function initTimeline(arena) {
+  const shuffled = [...timelineEvents].sort(() => Math.random() - 0.5);
+  let selected = [];
+  const correct = [...timelineEvents].sort((a, b) => a.year - b.year);
+
+  function renderTimeline() {
+    const remaining = shuffled.filter(e => !selected.find(s => s.text === e.text));
+    arena.innerHTML = `
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border-2 border-sky-500/30 animate-pop">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-3xl animate-wiggle">🔗</span>
+          <div>
+            <h3 class="font-display font-bold text-xl text-sky-300">Timeline Challenge</h3>
+            <p class="text-gray-500 text-xs">Tap events in chronological order — earliest first!</p>
+          </div>
+        </div>
+
+        <!-- Placed timeline -->
+        <div class="mb-5 space-y-2">
+          <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">📍 Your Timeline (${selected.length} / ${timelineEvents.length})</p>
+          ${selected.length === 0 ? '<p class="text-gray-600 text-sm italic">Tap events below to build your timeline...</p>' : ''}
+          ${selected.map((e, i) => `
+            <div class="flex items-center gap-3 bg-sky-500/10 rounded-xl p-3 border border-sky-500/20 animate-slide-right">
+              <span class="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center text-sky-300 font-mono font-bold text-sm flex-shrink-0">${i + 1}</span>
+              <span class="text-white text-sm font-medium flex-1">${e.text}</span>
+              <button onclick="tlUndo(${i})" class="text-gray-500 hover:text-red-400 transition text-lg flex-shrink-0">✕</button>
+            </div>`).join('')}
+        </div>
+
+        <!-- Available events -->
+        ${remaining.length > 0 ? `
+        <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">⏰ Available Events</p>
+        <div class="space-y-2 mb-5">
+          ${remaining.map((e, i) => `
+            <button onclick="tlPick('${e.text.replace(/'/g, "\\'")}')" class="w-full text-left p-4 rounded-xl glass border-2 border-white/10 hover:border-sky-500/40 hover:bg-sky-500/5 transition-all text-white text-sm font-medium">
+              ${e.text}
+            </button>`).join('')}
+        </div>` : ''}
+
+        ${selected.length === timelineEvents.length ? `
+        <button onclick="tlCheck()" class="w-full px-8 py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-500 text-white font-bold text-lg hover:opacity-90 transition">🔍 Check My Timeline!</button>` : ''}
+
+        <div id="tl-feedback" class="mt-4"></div>
+      </div>`;
+  }
+
+  window.tlPick = function(text) {
+    const event = shuffled.find(e => e.text === text);
+    if (event && !selected.find(s => s.text === text)) { selected.push(event); renderTimeline(); }
+  };
+
+  window.tlUndo = function(idx) { selected.splice(idx, 1); renderTimeline(); };
+
+  window.tlCheck = function() {
+    let correctCount = 0;
+    selected.forEach((e, i) => { if (e.text === correct[i].text) correctCount++; });
+    const fb = document.getElementById('tl-feedback');
+    if (correctCount === correct.length) {
+      addXP(50); updateStreak(true);
+      confetti({ particleCount: 150, spread: 100, colors: ['#38bdf8', '#fbbf24', '#34d399'] });
+      fb.innerHTML = `<div class="bg-green-500/10 border-2 border-green-500/20 rounded-2xl p-5 text-center animate-pop"><span class="text-4xl">🎉</span><p class="text-green-300 font-bold text-xl mt-2">Perfect Timeline! +50 XP</p></div>`;
+    } else {
+      updateStreak(false);
+      const correctOrder = correct.map((e, i) => `<div class="flex items-center gap-2 text-sm"><span class="text-sky-300 font-mono font-bold">${e.year}</span><span class="text-gray-300">${e.text}</span></div>`).join('');
+      fb.innerHTML = `
+        <div class="bg-red-500/10 border-2 border-red-500/20 rounded-2xl p-5 animate-shake">
+          <p class="text-red-300 font-bold text-center mb-3">❌ ${correctCount}/${correct.length} correct — here's the right order:</p>
+          <div class="space-y-1.5">${correctOrder}</div>
+          <button onclick="selected=[];renderTimeline?renderTimeline():startBlastGame('timeline')" class="mt-4 mx-auto block px-6 py-2 rounded-xl bg-sky-500/20 border border-sky-500/30 text-sky-300 font-bold text-sm hover:bg-sky-500/30 transition">🔄 Try Again</button>
+        </div>`;
+    }
+  };
+
+  renderTimeline();
+}
+
+// ─── 🕵️ WHO AM I? Guess the text/concept from progressive clues ───
+const whoAmIData = [
+  { answer: "Rumpelstiltskin", clues: ["I am a dwarf from a Grimm fairy tale.", "I can spin straw into gold.", "I made a deal with a miller's daughter.", "I demanded her firstborn child as payment.", "Knowing my NAME is what defeats me."] },
+  { answer: "Snow White Dwarfs", clues: ["We are a group, not just one.", "We work underground every day.", "We offered shelter to a princess.", "We expected housework in return — reciprocity!", "There are 7 of us, and we are miners."] },
+  { answer: "Alberich (Nibelungenlied)", clues: ["I appear in a medieval German epic.", "I possess a magical treasure hoard.", "I own a Tarnkappe — a cloak of invisibility.", "I was defeated by a great hero.", "Siegfried conquered me and took my cloak."] },
+  { answer: "Schema Theory", clues: ["I am not a character — I am a concept.", "I explain why people read differently.", "I involve mental frameworks from socialization.", "Culture shapes me — I am not universal.", "I am the theory of culturally embedded knowledge structures."] },
+  { answer: "7 Zwerge (2004 Film)", clues: ["I am a modern retelling of a classic tale.", "I was a massive hit in Germany.", "I star 7 famous German comedians.", "My humor doesn't translate well to other cultures.", "I am a parody of Snow White."] },
+  { answer: "Brothers Grimm", clues: ["We were two people working together.", "We collected stories from German oral tradition.", "Our sources were laborer women, not aristocrats.", "We edited stories to serve Romantic nationalism.", "Our Kinder- und Hausmärchen is world-famous."] },
+  { answer: "Reciprocity", clues: ["I am a theme, not a character.", "I govern dwarf-human interactions.", "I mean mutual exchange — give and take.", "In Snow White, I look like: shelter for housework.", "In Rumpelstiltskin, I escalate: necklace → ring → child."] },
+  { answer: "Das Blaue Licht", clues: ["I am a Grimm fairy tale.", "I feature a dwarf character.", "The dwarf in me is not free — he is controlled.", "A human uses magic to command the dwarf.", "I am the key example of the 'Obedient Dwarf' category."] },
+];
+
+function initWhoAmI(arena) {
+  const shuffled = [...whoAmIData].sort(() => Math.random() - 0.5);
+  let roundIdx = 0, clueIdx = 0, guessed = false, score = 0;
+
+  function renderWhoAmI() {
+    if (roundIdx >= shuffled.length) { endWhoAmI(); return; }
+    const current = shuffled[roundIdx];
+    const revealedClues = current.clues.slice(0, clueIdx + 1);
+    const maxPoints = 5 - clueIdx;
+
+    arena.innerHTML = `
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border-2 border-green-500/30 animate-pop">
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl animate-wiggle">🕵️</span>
+            <div>
+              <h3 class="font-display font-bold text-xl text-green-300">Who Am I?</h3>
+              <p class="text-gray-500 text-xs">Round ${roundIdx + 1} / ${shuffled.length} — Fewer clues = more points!</p>
+            </div>
+          </div>
+          <div class="glass rounded-xl px-4 py-2"><span class="font-mono font-bold text-green-300">${score}</span><span class="text-gray-500 text-xs ml-1">pts</span></div>
+        </div>
+
+        <div class="space-y-2 mb-5">
+          ${revealedClues.map((c, i) => `
+            <div class="flex items-start gap-3 bg-green-500/${5 + i * 2} rounded-xl p-4 border border-green-500/10 animate-slide-right" style="animation-delay:${i * 0.1}s">
+              <span class="w-7 h-7 rounded-lg bg-green-500/20 flex items-center justify-center text-green-300 font-mono font-bold text-xs flex-shrink-0">🔍</span>
+              <p class="text-white text-sm sm:text-base font-medium">${c}</p>
+            </div>`).join('')}
+        </div>
+
+        <div class="flex items-center gap-2 mb-4">
+          <div class="flex gap-1">${current.clues.map((_, i) => `<div class="w-3 h-3 rounded-full ${i <= clueIdx ? 'bg-green-400' : 'bg-gray-700'}"></div>`).join('')}</div>
+          <span class="text-gray-500 text-xs">Clue ${clueIdx + 1}/${current.clues.length}</span>
+          <span class="text-green-300 text-xs font-bold ml-auto">Worth ${maxPoints} pt${maxPoints !== 1 ? 's' : ''}</span>
+        </div>
+
+        <div id="wai-feedback" class="mb-3 min-h-[40px]"></div>
+
+        ${!guessed ? `
+        <div class="flex gap-3 mb-3">
+          <input type="text" id="wai-input" class="flex-1 bg-white/5 border-2 border-green-500/30 rounded-2xl px-5 py-4 text-white text-lg font-bold focus:outline-none focus:border-green-500 transition placeholder:text-gray-600" placeholder="Type your guess..." autofocus autocomplete="off" onkeydown="if(event.key==='Enter')waiGuess()">
+          <button onclick="waiGuess()" class="px-6 py-4 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold hover:opacity-90 transition flex-shrink-0">🕵️ Guess!</button>
+        </div>
+        ${clueIdx < current.clues.length - 1 ? `<button onclick="waiMoreClues()" class="w-full py-3 rounded-xl glass border-2 border-white/10 hover:border-green-500/30 text-gray-400 hover:text-green-300 font-bold text-sm transition">🔍 Need Another Clue (-1 point)</button>` : ''}
+        ` : ''}
+      </div>`;
+    if (!guessed) { const inp = document.getElementById('wai-input'); if (inp) inp.focus(); }
+  }
+
+  window.waiGuess = function() {
+    const input = document.getElementById('wai-input');
+    if (!input) return;
+    const val = input.value.trim().toLowerCase();
+    if (!val) return;
+    const answer = shuffled[roundIdx].answer.toLowerCase();
+    const fb = document.getElementById('wai-feedback');
+    // Flexible matching — check if answer contains guess or vice versa
+    const isCorrect = answer.includes(val) || val.includes(answer) || answer.split(/[\s()]/g).some(w => w.length > 3 && val.includes(w.toLowerCase()));
+    if (isCorrect) {
+      guessed = true;
+      const pts = Math.max(1, 5 - clueIdx);
+      score += pts; addXP(pts * 5); updateStreak(true);
+      confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 }, colors: ['#34d399', '#fbbf24'] });
+      fb.innerHTML = `<div class="text-center text-green-300 font-bold animate-pop text-lg">🎉 Correct! It's <span class="text-white">${shuffled[roundIdx].answer}</span>! +${pts} pts</div>`;
+      setTimeout(() => { roundIdx++; clueIdx = 0; guessed = false; renderWhoAmI(); }, 1800);
+    } else {
+      fb.innerHTML = `<div class="text-center text-red-300 font-bold animate-shake">❌ Not quite — try again or get another clue!</div>`;
+      input.value = ''; input.focus();
+    }
+  };
+
+  window.waiMoreClues = function() {
+    if (clueIdx < shuffled[roundIdx].clues.length - 1) { clueIdx++; renderWhoAmI(); }
+  };
+
+  function endWhoAmI() {
+    confetti({ particleCount: 100, spread: 80, colors: ['#34d399', '#fbbf24', '#38bdf8'] });
+    arena.innerHTML = `
+      <div class="glass-strong rounded-2xl p-8 text-center animate-pop border-2 border-green-500/30">
+        <span class="text-5xl">🕵️</span>
+        <h3 class="font-display font-bold text-2xl text-green-300 mt-4">Detective Work Complete!</h3>
+        <p class="text-white text-4xl font-mono font-bold mt-3">${score} points</p>
+        <p class="text-gray-400 text-sm mt-2">across ${shuffled.length} mysteries</p>
+        <button onclick="startBlastGame('whoami')" class="mt-6 px-8 py-3 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold hover:opacity-90 transition">🕵️ Play Again</button>
+      </div>`;
+  }
+
+  renderWhoAmI();
+}
+
+// ─── 🗂️ CATEGORY SORT: Sort items into Gilmour's categories ───
+const categorySortData = {
+  categories: [
+    { name: "Unexpected Helper", emoji: "🤲", color: "green" },
+    { name: "Obedient Dwarf", emoji: "🫡", color: "blue" },
+    { name: "Demonic Dwarf", emoji: "😈", color: "red" },
+    { name: "Volunteer Giver", emoji: "🎁", color: "yellow" },
+    { name: "Ungrateful/Evil", emoji: "💀", color: "purple" },
+  ],
+  items: [
+    { text: "Snow White's 7 dwarfs", cat: "Unexpected Helper" },
+    { text: "Elves & the Shoemaker", cat: "Unexpected Helper" },
+    { text: "Rumpelstiltskin", cat: "Demonic Dwarf" },
+    { text: "Das Blaue Licht dwarf", cat: "Obedient Dwarf" },
+    { text: "Snow White & Rose Red dwarf", cat: "Ungrateful/Evil" },
+    { text: "Dwarf who helps for fair exchange", cat: "Volunteer Giver" },
+    { text: "Helps secretly, wants nothing", cat: "Unexpected Helper" },
+    { text: "Controlled by human magic", cat: "Obedient Dwarf" },
+    { text: "Demands a child as payment", cat: "Demonic Dwarf" },
+    { text: "Associated with greed & the Devil", cat: "Ungrateful/Evil" },
+  ]
+};
+
+function initCategorySort(arena) {
+  const items = [...categorySortData.items].sort(() => Math.random() - 0.5);
+  let currentItem = 0, score = 0, wrong = 0;
+
+  function renderSort() {
+    if (currentItem >= items.length) { endSort(); return; }
+    const item = items[currentItem];
+    const colorMap = { green: 'green', blue: 'blue', red: 'red', yellow: 'yellow', purple: 'purple' };
+
+    arena.innerHTML = `
+      <div class="glass-strong rounded-2xl p-6 sm:p-8 border-2 border-amber-500/30 animate-pop">
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl animate-wiggle">🗂️</span>
+            <div>
+              <h3 class="font-display font-bold text-xl text-amber-300">Category Sort</h3>
+              <p class="text-gray-500 text-xs">${currentItem + 1} / ${items.length} items</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="glass rounded-xl px-3 py-1.5"><span class="text-green-300 font-mono font-bold text-sm">✅ ${score}</span></div>
+            <div class="glass rounded-xl px-3 py-1.5"><span class="text-red-300 font-mono font-bold text-sm">❌ ${wrong}</span></div>
+          </div>
+        </div>
+
+        <div class="bg-amber-500/10 rounded-2xl p-6 border-2 border-amber-500/20 mb-6 text-center">
+          <p class="text-gray-400 text-xs uppercase tracking-wider mb-2">Sort this item:</p>
+          <p class="font-display font-bold text-xl sm:text-2xl text-white">${item.text}</p>
+        </div>
+
+        <div id="cs-feedback" class="mb-4 min-h-[40px]"></div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          ${categorySortData.categories.map(cat => `
+            <button onclick="csChoice('${cat.name}')" class="p-4 rounded-2xl glass border-2 border-${cat.color}-500/20 hover:border-${cat.color}-500/50 hover:bg-${cat.color}-500/10 transition-all text-center group">
+              <span class="text-2xl block mb-1 group-hover:animate-wiggle">${cat.emoji}</span>
+              <span class="font-display font-bold text-${cat.color}-300 text-xs sm:text-sm">${cat.name}</span>
+            </button>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  window.csChoice = function(catName) {
+    const item = items[currentItem];
+    const fb = document.getElementById('cs-feedback');
+    if (catName === item.cat) {
+      score++; addXP(10); updateStreak(true);
+      fb.innerHTML = `<div class="text-center text-green-300 font-bold animate-pop text-lg">✅ Correct! +10 XP</div>`;
+      confetti({ particleCount: 20, spread: 30, origin: { y: 0.7 }, colors: ['#fbbf24', '#34d399'] });
+    } else {
+      wrong++; updateStreak(false);
+      fb.innerHTML = `<div class="text-center text-red-300 font-bold animate-shake">❌ Nope! It's <span class="text-white">${item.cat}</span></div>`;
+    }
+    setTimeout(() => { currentItem++; renderSort(); }, 1000);
+  };
+
+  function endSort() {
+    confetti({ particleCount: 100, spread: 80, colors: ['#fbbf24', '#d946ef', '#34d399'] });
+    const pct = Math.round((score / items.length) * 100);
+    arena.innerHTML = `
+      <div class="glass-strong rounded-2xl p-8 text-center animate-pop border-2 border-amber-500/30">
+        <span class="text-5xl">🗂️</span>
+        <h3 class="font-display font-bold text-2xl text-amber-300 mt-4">Sorting Complete!</h3>
+        <p class="text-white text-4xl font-mono font-bold mt-3">${score} / ${items.length}</p>
+        <p class="text-gray-400 text-sm mt-2">(${pct}%) correctly sorted</p>
+        <button onclick="startBlastGame('categorysort')" class="mt-6 px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold hover:opacity-90 transition">🗂️ Play Again</button>
+      </div>`;
+  }
+
+  renderSort();
 }
 </script>
 </body>
